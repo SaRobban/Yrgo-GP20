@@ -1,0 +1,35 @@
+//Modyfied copypaste from assingment
+
+//Create our timing variable
+int frame = 0;
+int spaceBetweenLines = 10;
+int colorIntervall = 3;
+color bgC = color(128,128,128);
+color lineC = color(255,255,255);
+color oddLineC = color(0,0,0);
+
+
+void setup()
+{
+  size(640, 480);
+}
+
+void draw()
+{
+    //Clear background
+  background(bgC);
+
+    //Draw our art, or in this case a rectangle
+  rect(100, 100, 300, 300);
+
+    //Draw our scan lines.
+  for (int i = 0; i < height; i = i + spaceBetweenLines) {
+    stroke(128, 128, 128, 64);
+    strokeWeight(2);
+    //change height based on time (and use % to loop)
+    line(0, (i) % height, width, height -i % height);
+  }
+
+    //Increment our frame count
+  frame++;
+}
