@@ -18,13 +18,13 @@ boolean animateArms = true;
 //Background
 PVector gridCenter;
 color bgC = color(128,128,128,255);
-color bgTwoC = color(255,255,255,64);
+color bgTwoC = color(255,255,255,32);
 int offsetFromCorner = 40;
 
 //Lines
 int colorIntervall = 3;
-color lineC = color(128,64,255,64);
-color oddLineC = color(128,128,255,125);
+color lineC = color(128,64,255,32);
+color oddLineC = color(128,128,255,200);
 color oddLineTwoC = color(255,128,255,255);
 
 
@@ -54,7 +54,7 @@ void CreateGrid(int nOA, int nOL, float anim){
 
 	if (nOA == 2) {
 		mulCircle = 2 * PI; //Full circle in radians
-		mulI = 1.00000000 / 8.0;
+		mulI = 1.00000000 / 3.0;
 	}
 
 
@@ -101,9 +101,11 @@ void CreateGrid(int nOA, int nOL, float anim){
 void draw()
 {
 	//Tweeks
-	numberOfAxis = 6;
-	numberOfLines = 24;
-	axisStep = 10;
+	numberOfAxis = 6;//prefer even
+	numberOfLines = 48;
+	axisStep = 8;
+
+animHintervall = 4;
 
 	CreateGrid(numberOfAxis, numberOfLines, frame * 0.01);
 
@@ -123,14 +125,18 @@ void draw()
 	//Draw rest
 	 for(int u = 0; u < nodes.length; u++){
 	 	stroke(lineC);
-	 	if((u + animHard) % 6 == 0){
+strokeWeight(1.5);
+	 	if((u + animHard) % 12 == 0){
 	 		stroke(oddLineTwoC);
+strokeWeight(3.5);
 	 	}
-	 	if((u - 1 + animHard) % 6 == 0){
+	 	if((u - 1 + animHard) % 12 == 0){
 	 		stroke(oddLineC);
+strokeWeight(2.5);
 	 	}
-	 	if((u + 1 + animHard) % 6 == 0){
+	 	if((u + 1 + animHard) % 12 == 0){
 	 		stroke(oddLineC);
+strokeWeight(2.5);
 	 	}
 	 	int z = (u + numberOfLines) % nodes.length;
 	 	line(gridCenter.x + nodes[u].x, gridCenter.y + nodes[u].y, gridCenter.x + nodes[z].x, gridCenter.y + nodes[z].y);
