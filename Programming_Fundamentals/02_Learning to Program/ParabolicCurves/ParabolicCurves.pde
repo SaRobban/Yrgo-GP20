@@ -3,7 +3,7 @@
 
 
 /*
-		Jag har försökt lösa uppgiften på enklaste möjliga sätt och komenterat skiten ur det i hopp om att någon ska finna det hjälpsamt.
+		Jag har försökt lösa uppgiften på enklaste möjliga sätt och komenterat skiten ur den i hopp om att någon ska finna det hjälpsamt.
 ************************************************ SAMT FÖR ATT LÄRAREN SA ATT HAN ÄLSKA KOD KOMMENTARER!!! *********************************************
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -108,6 +108,7 @@ void draw(){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Done////
 
 	//För animation adderar vi variablen "frame" varje frame. om frame är större än lineStep är frame lika med 0.
+	//Jag har oxå variablen animModulus som hoppar två steg för varje reset
 	frame++;
 	if(frame >= lineStep){
 		frame = 0;
