@@ -50,7 +50,7 @@ void draw(){
 
   //Add force vector to move ball position each frame
   force.y += gravity;
-  force.mult(0.999); // draft
+  force.mult(0.99); // draft
   ballPos.add(force);
 
   
@@ -66,15 +66,16 @@ void draw(){
 
       //Our force vector is screencenter - ball position
       force.set(halfWidth - ballPos.x, halfHeight - ballPos.y);
-      force.mult(speedAdjust);
-
+      
+/*
       //Draws line form screen middle to ball
       stroke(lineOneC);
       strokeWeight(2);
       line(halfWidth, halfHeight, ballPos.x, ballPos.y);
-      
+    */  
       //Draws our force vector to middle of screen
       stroke(lineTwoC);
+      strokeWeight(6);
       line(halfWidth, halfHeight, halfWidth + force.x, halfHeight + force.y);
 
       PVector arrowHead = new PVector();
@@ -85,6 +86,11 @@ void draw(){
       line(halfWidth + force.x, halfHeight + force.y, halfWidth + force.x + arrowHead.x, halfHeight + force.y + arrowHead.y);
       arrowHead.rotate(PI * 0.5);
       line(halfWidth + force.x, halfHeight + force.y, halfWidth + force.x + arrowHead.x, halfHeight + force.y + arrowHead.y);
+
+
+      force.mult(speedAdjust);
+
+      ZeroTrail(ballPos);
   }
 
   //restrict room
@@ -94,14 +100,14 @@ void draw(){
     ballH = ballRadius + 20;
     frame = trailIntervall;
   }
-  /*
-  if(ballPos.y < offsett){
+  
+  if(ballPos.y < -200){
     force.y *= -1;
     ballW = ballRadius + 20;
     ballH = ballRadius - 20;
     frame = trailIntervall;
   }
-  */
+  
   if(ballPos.y > height - offsett) {
     force.y *= -1;
     ballW = ballRadius + 20;
@@ -132,12 +138,12 @@ void draw(){
   }
 
 //draw trail
- stroke(lineTwoC);
-  for(int t = 0; t < trail.length -1; t++){
-    
-    stroke(lerpColor(ballC, bgCa, trailColNum * t));
+  stroke(lineTwoC);
+  for(int t = trail.length-1; t > 0; t--){
+
+    stroke(lerpColor(ballC, bgC, trailColNum * t));
     strokeWeight(10);
-    line(trail[t].x, trail[t].y, trail[t+1].x, trail[t+1].y);
+    line(trail[t].x, trail[t].y, trail[t-1].x, trail[t-1].y);
   }
 /////////////////////////////////////////////////////////////////////
 
@@ -165,4 +171,11 @@ if (v.y < offsett)
   v.y = offsett;
 
 return v;
+}
+
+
+void ZeroTrail(PVector pos){
+  for(int i = 0; i < trail.length; i++){
+    trail[i].set(pos);
+  }
 }
