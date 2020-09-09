@@ -1,42 +1,46 @@
 //Modyfied copypaste from assingment
-//THX. Simon J, for convert to float
+//THX. Simon J, for how to convert int to float
 
 //grid
+PVector gridCenter;
+
 int numberOfAxis = 6;
 int numberOfLines = 24;
 float axisStep = 10.0;
-PVector[] axisV;
+
+PVector[] axisVectors;
 PVector[] nodes;
 
 //Create our timing variable
 int frame = 0;
-int animHard = 0;
-int animHintervall = 10;
+int animHardStep = 0;
+int animHardStepIntervall = 10;
 
 boolean animateArms = true;
 
-//Background
-PVector gridCenter;
-color bgC = color(128,128,128,255);
-color bgTwoC = color(255,255,255,32);
-int offsetFromCorner = 40;
-
 //Lines
 int colorIntervall = 3;
-color lineC = color(128,64,255,32);
-color oddLineC = color(128,128,255,200);
-color oddLineTwoC = color(255,128,255,255);
+color lineColOne = color(128,64,255,32);
+color lineColTwo = color(128,128,255,200);
+color lineColTre = color(255,128,255,255);
+
+//Background
+color bgColOne = color(128,128,128,255);
+color bgColOneolTwo = color(255,255,255,32);
+int offsetFromCorner = 40;
 
 
 void setup()
 {
 	size(640, 480);
-	gridCenter = new PVector((float)width *0.5, (float)height * 0.5);
-
+	gridCenter = new PVector((float)width * 0.5, (float)height * 0.5);
+	gridCenter.x -= 200; //Compensate or sloppy animation
 	CreateGrid(numberOfAxis, numberOfLines, frame);
 }
 
 void CreateGrid(int nOA, int nOL, float anim){
+	
+	//failsafe if numberOfarms or number of lines is less then minimum use minimum
 	if(nOL < 1){
 		nOL = 1;
 	}
@@ -44,24 +48,22 @@ void CreateGrid(int nOA, int nOL, float anim){
 		nOA = 2;
 	}
 
-
-	axisV = new PVector[nOA];
-	nodes = new PVector[nOA * nOL];
-
 	//Create points in a circle;
 	float mulCircle = 2 * PI; //Full circle in radians
 	float mulI = 1.00000000 / (float)nOA;
 
+	//failsafe if numberOfarms is minimum use other angle, no flatline
 	if (nOA == 2) {
 		mulCircle = 2 * PI; //Full circle in radians
 		mulI = 1.00000000 / 3.0;
 	}
 
-
+	axisVectors = new PVector[nOA];
+	nodes = new PVector[nOA * nOL];
+	
 	int axisTravel = 0; 
 	int axisLine = 0;
 	boolean  swapDir = true;
-
 
 	//animation
 	float axStepOne = axisStep * sin(anim);
@@ -94,7 +96,7 @@ void CreateGrid(int nOA, int nOL, float anim){
 
 	for(int i = 0; i < nOA; i++){
 		//PVector p = new PVector(0,1);
-		axisV[i] = PVector.fromAngle(mulCircle * mulI * i);
+		axisVectors[i] = PVector.fromAngle(mulCircle * mulI * i);
 	}
 }
 
@@ -105,37 +107,41 @@ void draw()
 	numberOfLines = 48;
 	axisStep = 8;
 
-animHintervall = 4;
+	animHardStepIntervall = 4;
+
+
+	gridCenter.x += sin(frame * 0.005);
+	gridCenter.y += cos(frame * 0.01);
 
 	CreateGrid(numberOfAxis, numberOfLines, frame * 0.01);
 
 
 	//Draw backdrop
-	DrawBackGround(animHard);
+	DrawBackGround(animHardStep);
 
 	//Draw our scan lines.
 	strokeWeight(1.5);
-	stroke(lineC);
+	stroke(lineColOne);
 	
 	//Draw axis'es
-	for(int i = 0; i < axisV.length; i ++){
-		 //line(gridCenter.x, gridCenter.y, gridCenter.x + axisV[i].x * 200, gridCenter.y + axisV[i].y * 200);
-	}
+	//for(int i = 0; i < axisVectors.length; i ++){
+		 //line(gridCenter.x, gridCenter.y, gridCenter.x + axisVectors[i].x * 200, gridCenter.y + axisVectors[i].y * 200);
+	//}
 
 	//Draw rest
 	 for(int u = 0; u < nodes.length; u++){
-	 	stroke(lineC);
+	 	stroke(lineColOne);
 strokeWeight(1.5);
-	 	if((u + animHard) % 12 == 0){
-	 		stroke(oddLineTwoC);
+	 	if((u + animHardStep) % 12 == 0){
+	 		stroke(lineColTre);
 strokeWeight(3.5);
 	 	}
-	 	if((u - 1 + animHard) % 12 == 0){
-	 		stroke(oddLineC);
+	 	if((u - 1 + animHardStep) % 12 == 0){
+	 		stroke(lineColTwo);
 strokeWeight(2.5);
 	 	}
-	 	if((u + 1 + animHard) % 12 == 0){
-	 		stroke(oddLineC);
+	 	if((u + 1 + animHardStep) % 12 == 0){
+	 		stroke(lineColTwo);
 strokeWeight(2.5);
 	 	}
 	 	int z = (u + numberOfLines) % nodes.length;
@@ -143,15 +149,15 @@ strokeWeight(2.5);
 	 }
 	 
 	 frame++;
-	 if(frame % animHintervall == 0)
-	 	animHard++;
+	 if(frame % animHardStepIntervall == 0)
+	 	animHardStep++;
 }
 
 void DrawBackGround(int anim){
 	//Clear background
-	background(bgC);
+	background(bgColOne);
 	noStroke();
-	fill(bgTwoC);
+	fill(bgColOneolTwo);
 
 
 	int yL = 10;
@@ -189,9 +195,9 @@ void DrawBackGround(int anim){
 
 void DrawBGPixels(int p, float x,float y, float xsize, float ysize){
 	if(p % 38 == 0){
-					fill(bgC);
+					fill(bgColOne);
 				}else{
-					fill(bgTwoC);
+					fill(bgColOneolTwo);
 				}
 				rect(x, y, xsize, ysize);
 }
