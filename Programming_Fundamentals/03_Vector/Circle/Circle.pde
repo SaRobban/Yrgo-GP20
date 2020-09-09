@@ -8,20 +8,16 @@
 //Make the circle bounce on the edges of the screen.
 
 float ballRadius = 55;
-
 PVector ballPos;
 PVector oldBallPos;
-
 PVector force;
 float forceAdjust = 0.05;
 PVector ballMovement;
-
 
 int offsett = 40;
 color bgC = color(48, 64, 32, 255);
 color ballC = color(128, 255, 128, 255);
 color lineOneC = color(0, 255,0, 128);
-color lineTwoC = color(0, 255, 0, 255);
 
 void setup(){
   size(640, 480);
@@ -65,12 +61,12 @@ void draw(){
   	force.y *= -1;
   }
 
-  //draw Circle/ ball
-  //circle(ballPos.x, ballPos.y, ballRadius);
+  //draw ball
   noStroke();
   fill(ballC);
   
   ellipse(ballPos.x, ballPos.y, ballRadius, ballRadius);
+  //circle(ballPos.x, ballPos.y, ballRadius);
 }
 
 
