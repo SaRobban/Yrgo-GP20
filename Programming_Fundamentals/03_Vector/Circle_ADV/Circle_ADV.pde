@@ -9,7 +9,7 @@
 
 int frame = 0;
 int trailIntervall = 3;
-int trailLength = 10;
+int trailLength = 100;
 float  trailColNum;
 
 float gravity = 0.1;
@@ -111,11 +111,7 @@ void draw(){
     ballPos.y = height - offsett;
   }
 
-  //draw Circle/ ball
-  //circle(ballPos.x, ballPos.y, ballRadius);
-  noStroke();
-  fill(ballC);
-  ellipse(ballPos.x, ballPos.y, ballW, ballH);
+  
 
   if(ballW > ballRadius)
     ballW -= 1;
@@ -126,7 +122,7 @@ void draw(){
   if(ballH < ballRadius)
     ballH += 1;
 
-//Set trial
+//Set trial/////////////////////////////////////////////////////////
   if(frame >= trailIntervall){
     for(int i = trail.length-1; i > 0; i--){
       trail[i].set(trail[i-1]);
@@ -143,6 +139,14 @@ void draw(){
     strokeWeight(10);
     line(trail[t].x, trail[t].y, trail[t+1].x, trail[t+1].y);
   }
+/////////////////////////////////////////////////////////////////////
+
+
+//draw Circle/ ball
+  //circle(ballPos.x, ballPos.y, ballRadius);
+  stroke(ballC);
+  fill(bgC);
+  ellipse(ballPos.x, ballPos.y, ballW, ballH);
 
   frame++;
 }
