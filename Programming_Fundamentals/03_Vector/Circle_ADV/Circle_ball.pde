@@ -20,6 +20,11 @@ class Ball{
 		pos.set(x,y);
 	}
 
+	void AddPosition(float x, float y){
+		pos.x += x;
+		pos.y += y;
+	}
+
 	void SetForce(float fX, float fY){
 		forceV.set(fX, fY);
 	}
@@ -27,7 +32,31 @@ class Ball{
 	void AddForces(float g, float drag){
 		forceV.mult(1 - drag);
 		forceV.set(forceV.x, forceV.y + g);
-		pos.add(forceV);
+		//pos.add(forceV);
+	}
+
+	//thx. Joni @ stackoverflow //https://stackoverflow.com/questions/61272597/calculate-the-bouncing-angle-for-a-ball-point
+	PVector bounce(PVector n, PVector v) {
+		PVector norm = new PVector(n.x, n.y);
+		PVector travel = new PVector(v.x, v.y);
+
+  		PVector tmp = norm.mult(-2 * travel.dot(norm));
+		tmp.add(v);
+	    return tmp;
+	}
+
+
+	void Collided(PVector n, PVector p, PVector c){
+		
+
+		float movePosX = c.x;//n.x * radius;
+		float movePosY = c.y;//n.y * radius;
+	
+		this.AddPosition(movePosX, movePosY);
+		
+		forceV.set(bounce(n, forceV));
+
+
 	}
 
 	void SetColor(color col){
@@ -42,6 +71,18 @@ class Ball{
 		return pos;
 	}
 
+	float GetPositionX(){
+		return pos.x;
+	}
+
+	float GetPositionY(){
+		return pos.y;
+	} 
+
+	void CalculateStep(){
+		pos.add(forceV);
+	}
+
 	void Draw(){
 
 		deformX *= 0.1;
@@ -50,6 +91,6 @@ class Ball{
 		noStroke();
 		fill(ballColor);
 
-		ellipse(pos.x, pos.y, radius *2 + deformX, radius *2 + deformY);
+		ellipse(pos.x, pos.y, radius * 2 + deformX, radius * 2 + deformY);
 	}
 }

@@ -15,29 +15,107 @@ import java.io.IOException;
 public class Circle_ADV extends PApplet {
 
 Ball ball;
-BoxCollider2D cols[];
+BoxCollider2D colliders[];
+
+PVector midScreen;
+PVector mouseuoi;
+
+
+PVector hitVector = new PVector();
+
+int scoreMultiplyer = 0;
 
 
 public void setup(){
-  
-  ball = new Ball(40, 320, 240);
+    
+    ball = new Ball(40, 320, 240);
 
-  cols = new BoxCollider2D[1];
-  cols[0] = new BoxCollider2D(200,200,80,40, 0.523599f);
+    colliders = new BoxCollider2D[6];
+    //room
+    colliders[0] = new BoxCollider2D(320,560,640,100, 0.0f);
+    colliders[1] = new BoxCollider2D(-80,320,100,360, 0.0f);
+    colliders[2] = new BoxCollider2D(720,320,100,360, 0.0f);
+    colliders[3] = new BoxCollider2D(320,-80,640,100, 0.0f);
+
+//deco
+    colliders[4] = new BoxCollider2D(0,40,80,80, -0.523599f);
+    colliders[5] = new BoxCollider2D(640,40,80,80, 0.523599f);
+//basket
+    //colliders[6] = new BoxCollider2D(100,400,0,40, -0.1);
+    //colliders[7] = new BoxCollider2D(200,400,0,40, 0.1);
+
+
+
+
+
+    midScreen = new PVector(width * 0.5f, height * 0.5f);
+    mouseuoi = new PVector(mouseX, mouseY);
 
 }
 
 public void draw(){
-  background(0);
-  ball.SetPosition(mouseX, mouseY);
-  ball.SetColor(color (0,128,64,255));
+    background(0);
 
-  if(cols[0].CircleCheckIfCollision(ball)){
-    ball.SetColor(color (255,128,64,255));
-  }
+    ball.Draw();
 
-  ball.Draw();
-  cols[0].Draw(color(0, 0, 255, 255));
+
+    if(mousePressed){
+        mouseuoi.set(mouseX, mouseY);
+        PVector force = AddForce(midScreen, mouseuoi);
+
+        stroke(255);
+        line(mouseX, mouseY, mouseX + force.x, mouseY + force.y);
+        force.mult(0.1f);
+
+        ball.SetForce(force.x, force.y);
+        ball.SetPosition(mouseX, mouseY);
+    }else{
+        CheckCollitions();
+        ball.AddForces(0.1f, 0.01f);
+    }
+
+    //ball.SetColor(color (0,128,64,255));
+    ball.CalculateStep();
+
+    print(scoreMultiplyer);
+}
+
+
+public PVector AddForce(PVector v1, PVector v2){
+    PVector force = new PVector(v1.x - v2.x, v1.y - v2.y);
+    return force;
+}
+
+
+public void CheckCollitions(){
+
+    //Check ball aginst all colliders
+    PVector hitNormal = new PVector(0,0);
+    PVector hitPoint = new PVector(0,0);
+    PVector cutTrough = new PVector(0,0);
+
+    boolean hits = false;
+    for(int i = 0; i < colliders.length; i++){
+        if(colliders[i].CircleCheckIfCollision(ball)){
+            hitNormal.add(colliders[i].GetHitNormal());
+            hitPoint.add(colliders[i].GetHitPoint());
+            cutTrough.add(colliders[i].GetCut());
+
+            hits = true;
+            ball.SetColor(color (255,128,64,255));
+        }
+
+         colliders[i].Draw(color(0, 0, 255, 255));
+    }
+
+    if(hits){
+        hitNormal = hitNormal.normalize();
+        stroke(255);
+        line(ball.GetPositionX(), ball.GetPositionY(), ball.GetPositionX() + hitNormal.x *50, ball.GetPositionY() + hitNormal.y *50);
+        ball.Collided(hitNormal, hitPoint, cutTrough);
+
+        scoreMultiplyer++;
+    }
 }
 //Mess made by Robert Sandh - Yrgo GP20
 
@@ -54,6 +132,8 @@ class BoxCollider2D{
 	boolean hit;
 	PVector hitNormal;
 	PVector hitPoint;
+
+	PVector cutTrough;
 
 
 	PVector testDotVectorOne = new PVector(0,0);
@@ -94,6 +174,7 @@ class BoxCollider2D{
 		this.hit = false;
 		this.hitPoint = new PVector(0,0);
 		this.hitNormal = new PVector(0,0);
+		this.cutTrough = new PVector(0,0);
 	}
 
 
@@ -113,7 +194,7 @@ class BoxCollider2D{
 	}
 
 	public void CircleCollider2D(Ball ball){
-		PVector ballPos = ball.GetPosition();
+		PVector ballPos = new PVector(ball.GetPositionX(), ball.GetPositionY());
 		PVector bPos = new PVector(ballPos.x, ballPos.y);
 		PVector bDir = new PVector(bPos.x - posX, bPos.y - posY);
 
@@ -177,20 +258,44 @@ testDotVectorTwo.set(cornerDir[secondClosest].x, cornerDir[secondClosest].y);
 
 		//If dist to ball < ball radius we are on/in collider
 		if(distPOLToBallC < ball.GetRadius() * ball.GetRadius()){
-			hit = true;
+			
 			//print("ball hit a wall");
 			//If inside wall length else get vertexpoint
 			if(distToMid < wallLength * wallLength){
 				hitNormal.set(wallDir.y, -wallDir.x);
 				hitNormal.normalize();
 				hitPoint.set(pOnLine.x, pOnLine.y);
+
+				//Test
+				cutTrough.set(pOnLine.x, pOnLine.y);
+				cutTrough.sub(bPos);
+				float le = cutTrough.mag();
+				le -= ball.GetRadius();
+
+				cutTrough.normalize();
+				cutTrough.mult(le);
+
 			}else{
 				//print("ball hit a corner");
 				//Closet bewtween v[closest]
 				hitNormal.set(bPos.x - v[closest].x, bPos.y - v[closest].y);
+
+				float longth = hitNormal.mag();
+				
 				hitNormal.normalize();
 				hitPoint.set(v[closest].x, v[closest].y);
+
+
+				//Test
+				cutTrough.set(hitNormal.x, hitNormal.y);
+				//cutTrough.sub(bPos);
+				
+				longth -= ball.GetRadius();
+
+				cutTrough.mult(longth);
 			}
+
+			hit = true;
 		}
 testHitPoint.set(hitPoint.x, hitPoint.y);
 testHitNormal.set(hitNormal.x * 100, hitNormal.y *100);
@@ -222,6 +327,22 @@ testHitNormal.set(hitNormal.x * 100, hitNormal.y *100);
 	}
 
 
+
+
+	public PVector GetHitNormal(){
+		return hitNormal;
+	}
+
+	public PVector GetHitPoint(){
+		return hitPoint;
+	}
+
+	public PVector GetCut(){
+		return cutTrough;
+	}
+
+
+
 	public void Draw(int col){
 		strokeWeight(2);
 		noStroke();
@@ -251,7 +372,7 @@ testHitNormal.set(hitNormal.x * 100, hitNormal.y *100);
 */
 		if(hit){
 			stroke(color(255,0,0,255));
-			line(testHitPoint.x, testHitPoint.y, testHitPoint.x + testHitNormal.x, testHitPoint.y + testHitNormal.y);
+			line(testHitPoint.x, testHitPoint.y, testHitPoint.x + testHitNormal.x * 50, testHitPoint.y + testHitNormal.y * 50);
 		}
 
 	}
@@ -304,6 +425,11 @@ class Ball{
 		pos.set(x,y);
 	}
 
+	public void AddPosition(float x, float y){
+		pos.x += x;
+		pos.y += y;
+	}
+
 	public void SetForce(float fX, float fY){
 		forceV.set(fX, fY);
 	}
@@ -311,7 +437,31 @@ class Ball{
 	public void AddForces(float g, float drag){
 		forceV.mult(1 - drag);
 		forceV.set(forceV.x, forceV.y + g);
-		pos.add(forceV);
+		//pos.add(forceV);
+	}
+
+	//thx. Joni @ stackoverflow //https://stackoverflow.com/questions/61272597/calculate-the-bouncing-angle-for-a-ball-point
+	public PVector bounce(PVector n, PVector v) {
+		PVector norm = new PVector(n.x, n.y);
+		PVector travel = new PVector(v.x, v.y);
+
+  		PVector tmp = norm.mult(-2 * travel.dot(norm));
+		tmp.add(v);
+	    return tmp;
+	}
+
+
+	public void Collided(PVector n, PVector p, PVector c){
+		
+
+		float movePosX = c.x;//n.x * radius;
+		float movePosY = c.y;//n.y * radius;
+	
+		this.AddPosition(movePosX, movePosY);
+		
+		forceV.set(bounce(n, forceV));
+
+
 	}
 
 	public void SetColor(int col){
@@ -326,6 +476,18 @@ class Ball{
 		return pos;
 	}
 
+	public float GetPositionX(){
+		return pos.x;
+	}
+
+	public float GetPositionY(){
+		return pos.y;
+	} 
+
+	public void CalculateStep(){
+		pos.add(forceV);
+	}
+
 	public void Draw(){
 
 		deformX *= 0.1f;
@@ -334,8 +496,33 @@ class Ball{
 		noStroke();
 		fill(ballColor);
 
-		ellipse(pos.x, pos.y, radius *2 + deformX, radius *2 + deformY);
+		ellipse(pos.x, pos.y, radius * 2 + deformX, radius * 2 + deformY);
 	}
+}
+
+//THX. "lordOfDuct"
+
+//linePnt - point the line passes through
+//lineDir - unit vector in direction of line, either direction works
+//pnt - the point to find nearest on line for
+public PVector NearestPointOnLineRewritten(PVector lineStart, PVector lineDir, PVector vPoint)
+{
+	PVector lS = new PVector(lineStart.x, lineStart.y);
+	PVector lDir = new PVector(lineDir.x, lineDir.y);
+	PVector pnt = new PVector(vPoint.x, vPoint.y);
+
+    lDir.normalize();//this needs to be a unit vector
+    PVector v = pnt.sub(lS);
+    //PVector v = lineStart.sub(point);
+    float d = v.dot(lDir);
+    line(lS.x + lDir.x * d, lS.y + lDir.y * d, lS.x + lDir.x * d, lS.y+200 + lDir.y * d);
+
+
+    //return linePnt + lDir * d;
+    //point on line
+    lDir.mult(d);
+    lS.add(lDir);
+    return lS;
 }
   public void settings() {  size(640, 480); }
   static public void main(String[] passedArgs) {

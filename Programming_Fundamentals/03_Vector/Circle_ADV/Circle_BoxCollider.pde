@@ -14,6 +14,8 @@ class BoxCollider2D{
 	PVector hitNormal;
 	PVector hitPoint;
 
+	PVector cutTrough;
+
 
 	PVector testDotVectorOne = new PVector(0,0);
 	PVector testDotVectorTwo = new PVector(0,0);
@@ -53,6 +55,7 @@ class BoxCollider2D{
 		this.hit = false;
 		this.hitPoint = new PVector(0,0);
 		this.hitNormal = new PVector(0,0);
+		this.cutTrough = new PVector(0,0);
 	}
 
 
@@ -72,7 +75,7 @@ class BoxCollider2D{
 	}
 
 	void CircleCollider2D(Ball ball){
-		PVector ballPos = ball.GetPosition();
+		PVector ballPos = new PVector(ball.GetPositionX(), ball.GetPositionY());
 		PVector bPos = new PVector(ballPos.x, ballPos.y);
 		PVector bDir = new PVector(bPos.x - posX, bPos.y - posY);
 
@@ -136,20 +139,44 @@ testDotVectorTwo.set(cornerDir[secondClosest].x, cornerDir[secondClosest].y);
 
 		//If dist to ball < ball radius we are on/in collider
 		if(distPOLToBallC < ball.GetRadius() * ball.GetRadius()){
-			hit = true;
+			
 			//print("ball hit a wall");
 			//If inside wall length else get vertexpoint
 			if(distToMid < wallLength * wallLength){
 				hitNormal.set(wallDir.y, -wallDir.x);
 				hitNormal.normalize();
 				hitPoint.set(pOnLine.x, pOnLine.y);
+
+				//Test
+				cutTrough.set(pOnLine.x, pOnLine.y);
+				cutTrough.sub(bPos);
+				float le = cutTrough.mag();
+				le -= ball.GetRadius();
+
+				cutTrough.normalize();
+				cutTrough.mult(le);
+
 			}else{
 				//print("ball hit a corner");
 				//Closet bewtween v[closest]
 				hitNormal.set(bPos.x - v[closest].x, bPos.y - v[closest].y);
+
+				float longth = hitNormal.mag();
+				
 				hitNormal.normalize();
 				hitPoint.set(v[closest].x, v[closest].y);
+
+
+				//Test
+				cutTrough.set(hitNormal.x, hitNormal.y);
+				//cutTrough.sub(bPos);
+				
+				longth -= ball.GetRadius();
+
+				cutTrough.mult(longth);
 			}
+
+			hit = true;
 		}
 testHitPoint.set(hitPoint.x, hitPoint.y);
 testHitNormal.set(hitNormal.x * 100, hitNormal.y *100);
@@ -181,6 +208,22 @@ testHitNormal.set(hitNormal.x * 100, hitNormal.y *100);
 	}
 
 
+
+
+	PVector GetHitNormal(){
+		return hitNormal;
+	}
+
+	PVector GetHitPoint(){
+		return hitPoint;
+	}
+
+	PVector GetCut(){
+		return cutTrough;
+	}
+
+
+
 	void Draw(color col){
 		strokeWeight(2);
 		noStroke();
@@ -210,7 +253,7 @@ testHitNormal.set(hitNormal.x * 100, hitNormal.y *100);
 */
 		if(hit){
 			stroke(color(255,0,0,255));
-			line(testHitPoint.x, testHitPoint.y, testHitPoint.x + testHitNormal.x, testHitPoint.y + testHitNormal.y);
+			line(testHitPoint.x, testHitPoint.y, testHitPoint.x + testHitNormal.x * 50, testHitPoint.y + testHitNormal.y * 50);
 		}
 
 	}
