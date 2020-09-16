@@ -53,6 +53,8 @@ void draw(){
 
         ball.SetForce(force.x, force.y);
         ball.SetPosition(mouseX, mouseY);
+
+        CollidersDrawOnly();
     }else{
         CheckCollitions();
         ball.AddForces(0.1, 0.01);
@@ -61,7 +63,7 @@ void draw(){
     //ball.SetColor(color (0,128,64,255));
     ball.CalculateStep();
 
-    print(scoreMultiplyer);
+    //print(scoreMultiplyer);
 }
 
 
@@ -70,7 +72,11 @@ PVector AddForce(PVector v1, PVector v2){
     return force;
 }
 
-
+void CollidersDrawOnly(){
+     for(int i = 0; i < colliders.length; i++){
+        colliders[i].Draw(color(0, 0, 255, 255));
+    }
+}
 void CheckCollitions(){
 
     //Check ball aginst all colliders
@@ -86,7 +92,6 @@ void CheckCollitions(){
             cutTrough.add(colliders[i].GetCut());
 
             hits = true;
-            ball.SetColor(color (255,128,64,255));
         }
 
          colliders[i].Draw(color(0, 0, 255, 255));
