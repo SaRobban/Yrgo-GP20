@@ -124,6 +124,10 @@ public void CheckCollitions(){
 }
 //Mess made by Robert Sandh - Yrgo GP20
 
+//1 - Kolla om innom "rect" (bounds check)
+//2 - Om inom rect kolla om vi kolliderar
+//3 - Om vi kolliderar sätt hit to true och räkna ut normal samt hitpoint
+
 class BoxCollider2D{
 	int posX;
 	int posY;
@@ -139,7 +143,6 @@ class BoxCollider2D{
 	PVector hitPoint;
 
 	PVector cutTrough;
-
 
 	PVector testDotVectorOne = new PVector(0,0);
 	PVector testDotVectorTwo = new PVector(0,0);
