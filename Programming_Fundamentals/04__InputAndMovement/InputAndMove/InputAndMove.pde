@@ -3,7 +3,10 @@
 //Make it deaccelerate down to a standstill when no key is pressed.
 //Use deltaTime to control movement every update.
 
+float accTime = 1; //seconds till full speed or stop is rached
 
+float deAccTime = 2; 
+float turnSpeed = 20; 
 
 float maxSpeed = 5;
 
@@ -27,27 +30,32 @@ void setup(){
 void draw(){
 	deltaTime = ((millis() - time) * 0.001f);
 
+	background(0);
+
 	if(inputAxis.magSq() != 0){
 		//moveDir = inputAxis.copy();
-		acc += deltaTime * 0.1;
+		acc += deltaTime * accTime;
 		if(acc > 1){
 			acc = 1;
 		}
-		//FUKK IT TILL TOMOROW!!!
-		//float rad = PVector.angleBetween(inputAxis, moveDir);
-		//float fullCircle = 2 * PI;
-		//Use scalar inst....// float a = atan2(inputAxis.x - moveDir.x, inputAxis.y - moveDir.y);
-		//moveDir.rotate(rad * 0.25);
-		moveDir = inputAxis.copy();
+		float rad = PVector.angleBetween(inputAxis, moveDir);
+		PVector bendDir = inputAxis.copy();
+
+		bendDir.set(-bendDir.y, bendDir.x);
+		if(bendDir.dot(moveDir) > 0){
+			rad *=-1;
+		}
+		moveDir.rotate(rad * turnSpeed * deltaTime);
+		//moveDir = inputAxis.copy();
 
 	}else{
-		acc -= deltaTime * 0.1;
+		acc -= deltaTime * deAccTime;
 		if(acc < 0){
 			acc = 0;
 		}
 	}
 
-	print(acc);
+	//print(acc);
 	moveStep = moveDir.copy();
 	moveStep.mult(acc * maxSpeed);
 	pos.add(moveStep);
@@ -63,8 +71,5 @@ void endTime(){
 	time = millis();
 }
 void plPos(PVector pos){
-	circle(pos.x, pos.y, 5);
+	circle(pos.x, pos.y, 20);
 }
-
-
-
