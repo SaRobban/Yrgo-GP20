@@ -38,6 +38,9 @@ void draw(){
 		if(acc > 1){
 			acc = 1;
 		}
+
+		//For rotation instead of lerp
+		/*
 		float rad = PVector.angleBetween(inputAxis, moveDir);
 		PVector bendDir = inputAxis.copy();
 
@@ -46,10 +49,8 @@ void draw(){
 			rad *=-1;
 		}
 		//moveDir.rotate(rad * turnSpeed * deltaTime);
-
+		*/
 		moveDir.set(lerp(moveDir.x, inputAxis.x, turnSpeed * deltaTime), lerp(moveDir.y, inputAxis.y, turnSpeed * deltaTime));
-		//moveDir = inputAxis.copy();
-
 	}else{
 		acc -= deltaTime * deAccTime;
 		if(acc < 0){
