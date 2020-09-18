@@ -6,7 +6,7 @@
 float accTime = 1; //seconds till full speed or stop is rached
 
 float deAccTime = 2; 
-float turnSpeed = 20; 
+float turnSpeed = 4; 
 
 float maxSpeed = 5;
 
@@ -45,7 +45,9 @@ void draw(){
 		if(bendDir.dot(moveDir) > 0){
 			rad *=-1;
 		}
-		moveDir.rotate(rad * turnSpeed * deltaTime);
+		//moveDir.rotate(rad * turnSpeed * deltaTime);
+
+		moveDir.set(lerp(moveDir.x, inputAxis.x, turnSpeed * deltaTime), lerp(moveDir.y, inputAxis.y, turnSpeed * deltaTime));
 		//moveDir = inputAxis.copy();
 
 	}else{
