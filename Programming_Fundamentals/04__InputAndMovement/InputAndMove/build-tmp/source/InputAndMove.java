@@ -67,6 +67,7 @@ public void draw(){
 		//moveDir.rotate(rad * turnSpeed * deltaTime);
 		*/
 		moveDir.set(lerp(moveDir.x, inputAxis.x, turnSpeed * deltaTime), lerp(moveDir.y, inputAxis.y, turnSpeed * deltaTime));
+		moveDir.normalize();
 	}else{
 		acc -= deltaTime * deAccTime;
 		if(acc < 0){
