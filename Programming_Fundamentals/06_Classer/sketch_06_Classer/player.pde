@@ -22,17 +22,21 @@ class PlayerBall{
 		this.graphicDir = d.copy();
 	}
 	
+
 	PVector GetPosition(){
 		return pos.copy();
 	}
+
 
 	int GetRadius(){
 		return radius;
 	}
 
+
 	public int GetHp(){
 		return hp;
 	}
+
 
 	public boolean playerIsAlive(){
 		if(hp > 0){
@@ -45,18 +49,19 @@ class PlayerBall{
 
 	void Restrict(int maxRoomX, int maxRoomY){
 		//Restrict room
-		if(this.pos.x <= this.radius){
-			this.dir.x *= -1;
-		}else if(this.pos.x >= maxRoomX - this.radius){
-			this.dir.x *=-1;
+		if(pos.x <= 0){
+			pos.x += maxRoomX;
+		}else if(pos.x >= maxRoomX){
+			pos.x -= maxRoomX;
 		}
 
-		if(this.pos.y <= this.radius){
-			this.dir.y *= -1;
-		}else if(this.pos.y > maxRoomY - this.radius){
-			this.dir.y *= -1;
+		if(pos.y <= 0){
+			pos.y += maxRoomY;
+		}else if(pos.y > maxRoomY){
+			pos.y -= maxRoomY;
 		}
 	}
+
 
 	void CheckCollision(PVector posOther, float rOther){
 		float minDist = radius + rOther;
@@ -72,7 +77,6 @@ class PlayerBall{
 		float  distBetween = dirBetween.magSq();
 
 		if(distBetween < minDist){
-			this.col = color(255,255,0,255);
 			this.dir = dirBetween.normalize();
 			this.dir.mult(-1);
 			this.scaleSpeed = 1;//ImpactSpeed
@@ -80,19 +84,18 @@ class PlayerBall{
 		}
 	}
 
+
 	void ControllBall(PVector inputAxis, float maxSpeed, float accTime, float deAccTime, float turnSpeed, float deltaTime){
 		if(inputAxis.magSq() != 0){
 			
 			if(scaleSpeed <= 1){
 				scaleSpeed += deltaTime * accTime;
-				//scaleSpeed = 1;
 			}
 
 			dir.set(lerp(dir.x, inputAxis.x, turnSpeed * deltaTime), lerp(dir.y, inputAxis.y, turnSpeed * deltaTime));
 			graphicDir = dir.copy();
 			graphicDir = graphicDir.normalize();
 
-			
 		}else{
 			scaleSpeed -= deltaTime * deAccTime;
 			if(scaleSpeed < 0){
@@ -108,26 +111,40 @@ class PlayerBall{
 		anim += scaleSpeed * 0.5;
 	}
 
+
 	void DrawBall(float t){
 		noStroke();
 		fill(col);
+
+		//Fish color
+		if(hp >= 3){
+			fill(color(255,192,0,255));
+		}else if(hp == 2){
+			fill(color(255,128,0,255));
+		}
+		else{
+			float flash = sin(t) + 1;
+			fill(color(128 * flash, 32 * flash, 0, 255));
+		}
+		
 
 		PVector[] gfx = new PVector[4];
 		for(int i = 0; i < 4; i++){
 			gfx[i] = graphicDir.copy();
 			gfx[i].rotate(0.5*PI * i);
-			
 		}
 		ellipse(pos.x, pos.y, radius*2, radius*2);
 		
 		float floppyValue = 2 * (sin(anim) + 5 + scaleSpeed);
 		//fin
-		quad(pos.x - gfx[0].x * radius, pos.y - gfx[0].y * radius,
+		quad(pos.x - gfx[0].x * radius,
+			pos.y - gfx[0].y * radius,
 			
 			pos.x - gfx[1].x * (radius + 8) - gfx[0].x *5,
 			pos.y - gfx[1].y * (radius + 8) - gfx[0].y *5,
 
-			pos.x - gfx[2].x * radius, pos.y - gfx[2].y * radius,
+			pos.x - gfx[2].x * radius,
+			pos.y - gfx[2].y * radius,
 			
 			pos.x - gfx[3].x * (radius + 5) - gfx[0].x *floppyValue,
 			pos.y - gfx[3].y * (radius + 5) - gfx[0].y *floppyValue);
@@ -138,12 +155,14 @@ class PlayerBall{
 		//back fin
 		floppyValue = 2 * (sin(anim +1) + 2 + scaleSpeed);		
 
-		quad(pos.x - gfx[0].x * radius, pos.y - gfx[0].y * radius,
+		quad(pos.x - gfx[0].x * radius,
+			pos.y - gfx[0].y * radius,
 			
 			pos.x - gfx[1].x * radius - gfx[0].x *floppyValue,
 			pos.y - gfx[1].y * radius - gfx[0].y *floppyValue,
 
-			pos.x - gfx[2].x * radius, pos.y - gfx[2].y * radius,
+			pos.x - gfx[2].x * radius,
+			pos.y - gfx[2].y * radius,
 			
 			pos.x - gfx[3].x * radius - gfx[0].x *floppyValue,
 			pos.y - gfx[3].y * radius - gfx[0].y *floppyValue);

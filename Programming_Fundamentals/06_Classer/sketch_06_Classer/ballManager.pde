@@ -3,7 +3,6 @@ class BallManager{
 	color baseColor = color(128,64,32,255);
 	int baseRadius = 5;
 	float baseSpeed = 100;
-
 	float spawnRange;
 
 
@@ -15,6 +14,7 @@ class BallManager{
 		}
 	}
 
+
 	BallManager(int numberOfBalls, int r, PVector p, float s){
 		this.emyBalls = new Ball[numberOfBalls];
 
@@ -22,6 +22,7 @@ class BallManager{
 			this.emyBalls[b] = new Ball(r, baseColor, p, new PVector(random(0, 1), random(0, 1)), s);
 		}
 	}
+
 
 	BallManager(int numberOfBalls){
 		spawnRange = width * 0.5 + 20;
@@ -39,6 +40,7 @@ class BallManager{
  		return l;
  	}
 
+
 	void CheckSelfCollitionsAnd(){
 		for(int b = 0; b < emyBalls.length; b++){
 			for(int bOther = 0; bOther < emyBalls.length; bOther++){
@@ -49,6 +51,7 @@ class BallManager{
 			this.emyBalls[b].Restrict(width, height);
 		}
 	}
+
 
 	void CheckSelfCollitionsAnd(PlayerBall playerBall){
 		for(int b = 0; b < emyBalls.length; b++){
@@ -64,11 +67,13 @@ class BallManager{
 		}
 	}
 
+
 	void MovePositions(float deltaT){
 		for(int b = 0; b < emyBalls.length; b++){
 			this.emyBalls[b].MovePos(deltaT);
 		}
 	}
+
 
 	void DrawBalls(){
 		for(int i = 0; i < this.emyBalls.length; i++){
@@ -80,10 +85,8 @@ class BallManager{
 	void AddBall(){
 		emyBalls = (Ball[]) expand(emyBalls, emyBalls.length + 1);
 		emyBalls[emyBalls.length - 1] = CreateRadnomBall();
-		//emyBalls = temp;
-
-		//this.emyBalls[b] = new Ball(baseRadius, baseColor, new PVector(100 + 10 * b, 100 + 10 * b), new PVector(random(0, 1), random(0, 1)), baseSpeed);
 	}
+
 
 	Ball CreateRadnomBall(){
 		PVector randomSpawnPoint = new PVector(random(-1, 1), random(-1, 1));
@@ -91,14 +94,10 @@ class BallManager{
 		PVector randomDir = randomSpawnPoint.copy();
 
 		float diagonalLength = height * 0.5 + width * 0.5;
-		
+
 		randomSpawnPoint.mult(-diagonalLength);
 		randomSpawnPoint.add(random(-10, 10),random(-10, 10));
 
 		return new Ball((int)random(5, 20), baseColor, randomSpawnPoint, randomDir, baseSpeed);
-	}
-
-	void NumberOfBalls(){
-		print(emyBalls.length);
 	}
 }

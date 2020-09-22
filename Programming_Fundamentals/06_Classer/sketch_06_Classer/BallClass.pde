@@ -12,20 +12,24 @@ class Ball{
 		this.dir = d;
 		this.speed = s;
 	}
+
 	
 	PVector GetPosition(){
 		return pos.copy();
 	}
 
+
 	int GetRadius(){
 		return radius;
 	}
+
 
 	void MovePos(float deltaT){
 		PVector d = dir.copy();
 		d.mult(speed * deltaT);
 		pos.add(d);
 	}
+
 
 	void Restrict(int maxRoomX, int maxRoomY){
 		//Restrict room
@@ -47,6 +51,7 @@ class Ball{
 
 	}
 
+
 	void CheckCollision(PVector posOther, float rOther){
 		
 
@@ -67,6 +72,7 @@ class Ball{
 			this.dir.mult(-1);
 		}
 	}
+
 
 	void DrawBall(){
 		strokeWeight(3);

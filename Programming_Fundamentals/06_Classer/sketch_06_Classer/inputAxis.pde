@@ -30,9 +30,7 @@ void keyPressed(){
 
 	if(key == ' '){
 		space = true;
-		//print("space is true " , space);
 	}
-
 }
 
 
@@ -58,6 +56,5 @@ void keyReleased(){
 
 	if(key == ' '){
 		space = false;
-		//print("space is false " , space);
 	}
 }

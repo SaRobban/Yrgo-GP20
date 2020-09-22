@@ -1,23 +1,4 @@
-	//Start by making a copy from the "Input and Movement" lesson assignment, so we get a character that we can move on the screen.
-	//Create a player class and move as much code out from the main file as possible.
-
-	//(Let time and delta time still be calculated in the main file)
-	
-	//Add the Ball class from this lesson.
-	
 //Add size and color to the ball class.
-	
-	//Make the ball class handle bounces at the edge of the screen.
-	
-	//Create 10 balls that can bounce around the screen.
-	//Check if the player collides with a ball.
-	//Make some kind of Game Over screen when the player gets hit.
-
-
-//Using the input example from the lesson. Make it so a circle/character can move left-right-up-down.
-//Create input that gives the circle/character acceleration when it moves.
-//Make it deaccelerate down to a standstill when no key is pressed.
-//Use deltaTime to control movement every update.
 PlayerBall plBall;
 float plAccTime = 1; //seconds till full speed or stop is rached
 float plDeAccTime = 2; 
@@ -74,17 +55,14 @@ void draw(){
 			changeGameState();
 		}
 	}else if(gState == GameState.SaveLoad){
-		SaveAndLoad();
+		saveAndLoad();
 		changeGameState();
 	}else{
-		GameOver(score, hiScore, timeSinceStart *0.001);
+		gameOver(score, hiScore, timeSinceStart * 0.01);
 		if(space){
 			changeGameState();
 		}
 	}
-
-
-	//print("state " + state, space);
 	endTime();
 }
 
@@ -118,8 +96,6 @@ void changeGameState(){
         default :
        		gState = GameState.Title;
     }
-	
-    print(" ", gState);
 }
 
 
@@ -129,27 +105,37 @@ void runStartScreen(float anim){
 
 	//text
 	textAlign(CENTER, CENTER);
-	fill(255, 200, 153,255);
+	
 	textSize(96);
-	text("Goldfish", width * 0.5, height * 0.5 - 160);
-	textSize(32); 
-	text("in bubble hell", width * 0.5 + 90, height * 0.5 - 100); 
-	float ani = sin(anim) + 1;
-
-	ani = lerp(255, 128, ani * 0.5);
-
-	fill(255, ani, 153,255);
-	textSize(48);
-	text("Press space", width * 0.5, height * 0.5); 
 	fill(0, 0, 0, 32);
-	text("Press space", width * 0.5 + 2, height * 0.5 + 4);
+	text("Goldfish", width * 0.5 + 5, height * 0.5 - 155);
+	fill(255, 180, 100,255);
+	text("Goldfish", width * 0.5, height * 0.5 - 160);
+
+	textSize(32); 
+	fill(0, 0, 0, 32);
+	text("in bubble hell", width * 0.5 + 90, height * 0.5 - 95); 
+	fill(255, 180, 100,255);
+	text("in bubble hell", width * 0.5 + 85, height * 0.5 - 100); 
+	
+
+	//Press to start
+	textSize(48);
+	fill(0, 0, 0, 32);
+	text("Press space", width * 0.5, height * 0.5);
+
+	float ani = sin(anim) + 1;
+	float aniC = ani * 32;
+	fill(aniC + 192, aniC + 64, aniC, 255);
+	
+	text("Press space", width * 0.5 - ani, height * 0.5 - ani); 
+	
 }
 
 
 void runMainGame(){
 	if(intervall > 3){
 		emyBallManager.AddBall();
-		emyBallManager.NumberOfBalls();
 		intervall = 0;
 	}
 
@@ -168,14 +154,16 @@ void runMainGame(){
 	HUD(plBall.GetHp(), emyBallManager.GetNumberOfBalls());
 }
 
-void SaveAndLoad(){
+
+void saveAndLoad(){
 	hiScore = LoadHiScore();
 	if(hiScore < score){
 		SaveHiScore(score);
 	}
 }
+
 //font = loadFont("LetterGothicStd-32.vlw");
-void GameOver(int currentScore, int oldScore, float anim){
+void gameOver(int currentScore, int oldScore, float anim){
 	fill(255,0,0,3);
 	rect(0, 0, width, height);
 
@@ -186,19 +174,22 @@ void GameOver(int currentScore, int oldScore, float anim){
 	textSize(48);
 
 
-
+	if(oldScore > currentScore){
+		text("Your Score: " + currentScore, width *0.5, 250);
+		text("HighScore: " + oldScore, width * 0.5, 320);
+	}else{
+		text("New HiScore: " + currentScore, width *0.5, 250);
+		text("OldHighScore: " + oldScore, width * 0.5, 320);
+	}
 	
-
-
-
-
-	text("Score: " + currentScore, width *0.5, 250);
-	text("HighScore: " + oldScore, width * 0.5, 320);
+	//Press to start
+	textSize(48);
+	fill(0, 0, 0, 32);
+	text("Press space", width * 0.5, height * 0.5 + 150);
 
 	float ani = sin(anim) + 1;
-	ani = lerp(255, 128, ani * 0.5);
-	fill(255, ani, 153,255);
-	text("Press space", width * 0.5, height -100); 
-	fill(0, 0, 0, 32);
-	text("Press space", width * 0.5 +2, height -96); 
+	float aniC = ani * 32;
+	fill(aniC + 192, aniC + 64, aniC, 255);
+	
+	text("Press space", width * 0.5 - ani, height * 0.5 - ani + 150); 
 }

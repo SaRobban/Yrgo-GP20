@@ -14,26 +14,7 @@ import java.io.IOException;
 
 public class sketch_06_Classer extends PApplet {
 
-	//Start by making a copy from the "Input and Movement" lesson assignment, so we get a character that we can move on the screen.
-	//Create a player class and move as much code out from the main file as possible.
-
-	//(Let time and delta time still be calculated in the main file)
-	
-	//Add the Ball class from this lesson.
-	
 //Add size and color to the ball class.
-	
-	//Make the ball class handle bounces at the edge of the screen.
-	
-	//Create 10 balls that can bounce around the screen.
-	//Check if the player collides with a ball.
-	//Make some kind of Game Over screen when the player gets hit.
-
-
-//Using the input example from the lesson. Make it so a circle/character can move left-right-up-down.
-//Create input that gives the circle/character acceleration when it moves.
-//Make it deaccelerate down to a standstill when no key is pressed.
-//Use deltaTime to control movement every update.
 PlayerBall plBall;
 float plAccTime = 1; //seconds till full speed or stop is rached
 float plDeAccTime = 2; 
@@ -90,17 +71,14 @@ public void draw(){
 			changeGameState();
 		}
 	}else if(gState == GameState.SaveLoad){
-		SaveAndLoad();
+		saveAndLoad();
 		changeGameState();
 	}else{
-		GameOver(score, hiScore, timeSinceStart *0.001f);
+		gameOver(score, hiScore, timeSinceStart * 0.01f);
 		if(space){
 			changeGameState();
 		}
 	}
-
-
-	//print("state " + state, space);
 	endTime();
 }
 
@@ -134,8 +112,6 @@ public void changeGameState(){
         default :
        		gState = GameState.Title;
     }
-	
-    print(" ", gState);
 }
 
 
@@ -145,27 +121,37 @@ public void runStartScreen(float anim){
 
 	//text
 	textAlign(CENTER, CENTER);
-	fill(255, 200, 153,255);
+	
 	textSize(96);
-	text("Goldfish", width * 0.5f, height * 0.5f - 160);
-	textSize(32); 
-	text("in bubble hell", width * 0.5f + 90, height * 0.5f - 100); 
-	float ani = sin(anim) + 1;
-
-	ani = lerp(255, 128, ani * 0.5f);
-
-	fill(255, ani, 153,255);
-	textSize(48);
-	text("Press space", width * 0.5f, height * 0.5f); 
 	fill(0, 0, 0, 32);
-	text("Press space", width * 0.5f + 2, height * 0.5f + 4);
+	text("Goldfish", width * 0.5f + 5, height * 0.5f - 155);
+	fill(255, 180, 100,255);
+	text("Goldfish", width * 0.5f, height * 0.5f - 160);
+
+	textSize(32); 
+	fill(0, 0, 0, 32);
+	text("in bubble hell", width * 0.5f + 90, height * 0.5f - 95); 
+	fill(255, 180, 100,255);
+	text("in bubble hell", width * 0.5f + 85, height * 0.5f - 100); 
+	
+
+	//Press to start
+	textSize(48);
+	fill(0, 0, 0, 32);
+	text("Press space", width * 0.5f, height * 0.5f);
+
+	float ani = sin(anim) + 1;
+	float aniC = ani * 32;
+	fill(aniC + 192, aniC + 64, aniC, 255);
+	
+	text("Press space", width * 0.5f - ani, height * 0.5f - ani); 
+	
 }
 
 
 public void runMainGame(){
 	if(intervall > 3){
 		emyBallManager.AddBall();
-		emyBallManager.NumberOfBalls();
 		intervall = 0;
 	}
 
@@ -184,14 +170,16 @@ public void runMainGame(){
 	HUD(plBall.GetHp(), emyBallManager.GetNumberOfBalls());
 }
 
-public void SaveAndLoad(){
+
+public void saveAndLoad(){
 	hiScore = LoadHiScore();
 	if(hiScore < score){
 		SaveHiScore(score);
 	}
 }
+
 //font = loadFont("LetterGothicStd-32.vlw");
-public void GameOver(int currentScore, int oldScore, float anim){
+public void gameOver(int currentScore, int oldScore, float anim){
 	fill(255,0,0,3);
 	rect(0, 0, width, height);
 
@@ -202,21 +190,24 @@ public void GameOver(int currentScore, int oldScore, float anim){
 	textSize(48);
 
 
-
+	if(oldScore > currentScore){
+		text("Your Score: " + currentScore, width *0.5f, 250);
+		text("HighScore: " + oldScore, width * 0.5f, 320);
+	}else{
+		text("New HiScore: " + currentScore, width *0.5f, 250);
+		text("OldHighScore: " + oldScore, width * 0.5f, 320);
+	}
 	
-
-
-
-
-	text("Score: " + currentScore, width *0.5f, 250);
-	text("HighScore: " + oldScore, width * 0.5f, 320);
+	//Press to start
+	textSize(48);
+	fill(0, 0, 0, 32);
+	text("Press space", width * 0.5f, height * 0.5f + 150);
 
 	float ani = sin(anim) + 1;
-	ani = lerp(255, 128, ani * 0.5f);
-	fill(255, ani, 153,255);
-	text("Press space", width * 0.5f, height -100); 
-	fill(0, 0, 0, 32);
-	text("Press space", width * 0.5f +2, height -96); 
+	float aniC = ani * 32;
+	fill(aniC + 192, aniC + 64, aniC, 255);
+	
+	text("Press space", width * 0.5f - ani, height * 0.5f - ani + 150); 
 }
 class Ball{
 	int radius;
@@ -232,20 +223,24 @@ class Ball{
 		this.dir = d;
 		this.speed = s;
 	}
+
 	
 	public PVector GetPosition(){
 		return pos.copy();
 	}
 
+
 	public int GetRadius(){
 		return radius;
 	}
+
 
 	public void MovePos(float deltaT){
 		PVector d = dir.copy();
 		d.mult(speed * deltaT);
 		pos.add(d);
 	}
+
 
 	public void Restrict(int maxRoomX, int maxRoomY){
 		//Restrict room
@@ -267,6 +262,7 @@ class Ball{
 
 	}
 
+
 	public void CheckCollision(PVector posOther, float rOther){
 		
 
@@ -287,6 +283,7 @@ class Ball{
 			this.dir.mult(-1);
 		}
 	}
+
 
 	public void DrawBall(){
 		strokeWeight(3);
@@ -312,60 +309,36 @@ public void HUD(int hp, int wave){
 	text("Wave: " + wave, 12, 34); 
 }
 
-  
-PrintWriter output;
+//thx. Jonatan Johansson, Jimmy Saarela  
 JSONObject json;
-/*
-void setup() {
-  // Create a new file in the sketch directory
-  output = createWriter("data/hiscore.json"); 
-}
-*/
 
 public void CreateNewFile() {
-
-  File myObj = new File("data/hiscore.json");
-  //myObj.CreateNewFile();
-  output = createWriter("positions.txt"); 
-
   println("Created new file");
-
   json = new JSONObject();
-
-  json.setInt("Highscore", 0);
-  saveJSONObject(json, "hiscore.json");
-}
-
-
-public void SaveHiScore(int score) {
-
-
-  //json = new JSONObject();
   json.setInt("Highscore", score);
-
   saveJSONObject(json, "data/hiscore.json");
 }
 
 
+public void SaveHiScore(int score) {
+  json.setInt("Highscore", score);
+  saveJSONObject(json, "data/hiscore.json");
+}
+
 
 public int LoadHiScore() {
-  String filename = "hiscore.json";
-
   File f = new File(dataPath("hiscore.json"));
 
-  if (f.exists())
-  {
+  if (f.exists()){
     println("file exist");
     json = loadJSONObject("data/hiscore.json");
     int oldScore = json.getInt("Highscore");
     return oldScore;
     
   }else{
-    println("Create new file");
-    
-
-   //CreateNewFile();
-    return 0;
+    println("Try to create new file");
+    CreateNewFile();
+    return score;
   }
 }
 class BallManager{
@@ -373,7 +346,6 @@ class BallManager{
 	int baseColor = color(128,64,32,255);
 	int baseRadius = 5;
 	float baseSpeed = 100;
-
 	float spawnRange;
 
 
@@ -385,6 +357,7 @@ class BallManager{
 		}
 	}
 
+
 	BallManager(int numberOfBalls, int r, PVector p, float s){
 		this.emyBalls = new Ball[numberOfBalls];
 
@@ -392,6 +365,7 @@ class BallManager{
 			this.emyBalls[b] = new Ball(r, baseColor, p, new PVector(random(0, 1), random(0, 1)), s);
 		}
 	}
+
 
 	BallManager(int numberOfBalls){
 		spawnRange = width * 0.5f + 20;
@@ -409,6 +383,7 @@ class BallManager{
  		return l;
  	}
 
+
 	public void CheckSelfCollitionsAnd(){
 		for(int b = 0; b < emyBalls.length; b++){
 			for(int bOther = 0; bOther < emyBalls.length; bOther++){
@@ -419,6 +394,7 @@ class BallManager{
 			this.emyBalls[b].Restrict(width, height);
 		}
 	}
+
 
 	public void CheckSelfCollitionsAnd(PlayerBall playerBall){
 		for(int b = 0; b < emyBalls.length; b++){
@@ -434,11 +410,13 @@ class BallManager{
 		}
 	}
 
+
 	public void MovePositions(float deltaT){
 		for(int b = 0; b < emyBalls.length; b++){
 			this.emyBalls[b].MovePos(deltaT);
 		}
 	}
+
 
 	public void DrawBalls(){
 		for(int i = 0; i < this.emyBalls.length; i++){
@@ -450,10 +428,8 @@ class BallManager{
 	public void AddBall(){
 		emyBalls = (Ball[]) expand(emyBalls, emyBalls.length + 1);
 		emyBalls[emyBalls.length - 1] = CreateRadnomBall();
-		//emyBalls = temp;
-
-		//this.emyBalls[b] = new Ball(baseRadius, baseColor, new PVector(100 + 10 * b, 100 + 10 * b), new PVector(random(0, 1), random(0, 1)), baseSpeed);
 	}
+
 
 	public Ball CreateRadnomBall(){
 		PVector randomSpawnPoint = new PVector(random(-1, 1), random(-1, 1));
@@ -461,15 +437,11 @@ class BallManager{
 		PVector randomDir = randomSpawnPoint.copy();
 
 		float diagonalLength = height * 0.5f + width * 0.5f;
-		
+
 		randomSpawnPoint.mult(-diagonalLength);
 		randomSpawnPoint.add(random(-10, 10),random(-10, 10));
 
 		return new Ball((int)random(5, 20), baseColor, randomSpawnPoint, randomDir, baseSpeed);
-	}
-
-	public void NumberOfBalls(){
-		print(emyBalls.length);
 	}
 }
 PVector inputAxis = new PVector(0,0);
@@ -504,9 +476,7 @@ public void keyPressed(){
 
 	if(key == ' '){
 		space = true;
-		//print("space is true " , space);
 	}
-
 }
 
 
@@ -532,7 +502,6 @@ public void keyReleased(){
 
 	if(key == ' '){
 		space = false;
-		//print("space is false " , space);
 	}
 }
 class PlayerBall{
@@ -559,17 +528,21 @@ class PlayerBall{
 		this.graphicDir = d.copy();
 	}
 	
+
 	public PVector GetPosition(){
 		return pos.copy();
 	}
+
 
 	public int GetRadius(){
 		return radius;
 	}
 
+
 	public int GetHp(){
 		return hp;
 	}
+
 
 	public boolean playerIsAlive(){
 		if(hp > 0){
@@ -582,18 +555,19 @@ class PlayerBall{
 
 	public void Restrict(int maxRoomX, int maxRoomY){
 		//Restrict room
-		if(this.pos.x <= this.radius){
-			this.dir.x *= -1;
-		}else if(this.pos.x >= maxRoomX - this.radius){
-			this.dir.x *=-1;
+		if(pos.x <= 0){
+			pos.x += maxRoomX;
+		}else if(pos.x >= maxRoomX){
+			pos.x -= maxRoomX;
 		}
 
-		if(this.pos.y <= this.radius){
-			this.dir.y *= -1;
-		}else if(this.pos.y > maxRoomY - this.radius){
-			this.dir.y *= -1;
+		if(pos.y <= 0){
+			pos.y += maxRoomY;
+		}else if(pos.y > maxRoomY){
+			pos.y -= maxRoomY;
 		}
 	}
+
 
 	public void CheckCollision(PVector posOther, float rOther){
 		float minDist = radius + rOther;
@@ -609,7 +583,6 @@ class PlayerBall{
 		float  distBetween = dirBetween.magSq();
 
 		if(distBetween < minDist){
-			this.col = color(255,255,0,255);
 			this.dir = dirBetween.normalize();
 			this.dir.mult(-1);
 			this.scaleSpeed = 1;//ImpactSpeed
@@ -617,19 +590,18 @@ class PlayerBall{
 		}
 	}
 
+
 	public void ControllBall(PVector inputAxis, float maxSpeed, float accTime, float deAccTime, float turnSpeed, float deltaTime){
 		if(inputAxis.magSq() != 0){
 			
 			if(scaleSpeed <= 1){
 				scaleSpeed += deltaTime * accTime;
-				//scaleSpeed = 1;
 			}
 
 			dir.set(lerp(dir.x, inputAxis.x, turnSpeed * deltaTime), lerp(dir.y, inputAxis.y, turnSpeed * deltaTime));
 			graphicDir = dir.copy();
 			graphicDir = graphicDir.normalize();
 
-			
 		}else{
 			scaleSpeed -= deltaTime * deAccTime;
 			if(scaleSpeed < 0){
@@ -645,26 +617,40 @@ class PlayerBall{
 		anim += scaleSpeed * 0.5f;
 	}
 
+
 	public void DrawBall(float t){
 		noStroke();
 		fill(col);
+
+		//Fish color
+		if(hp >= 3){
+			fill(color(255,192,0,255));
+		}else if(hp == 2){
+			fill(color(255,128,0,255));
+		}
+		else{
+			float flash = sin(t) + 1;
+			fill(color(128 * flash, 32 * flash, 0, 255));
+		}
+		
 
 		PVector[] gfx = new PVector[4];
 		for(int i = 0; i < 4; i++){
 			gfx[i] = graphicDir.copy();
 			gfx[i].rotate(0.5f*PI * i);
-			
 		}
 		ellipse(pos.x, pos.y, radius*2, radius*2);
 		
 		float floppyValue = 2 * (sin(anim) + 5 + scaleSpeed);
 		//fin
-		quad(pos.x - gfx[0].x * radius, pos.y - gfx[0].y * radius,
+		quad(pos.x - gfx[0].x * radius,
+			pos.y - gfx[0].y * radius,
 			
 			pos.x - gfx[1].x * (radius + 8) - gfx[0].x *5,
 			pos.y - gfx[1].y * (radius + 8) - gfx[0].y *5,
 
-			pos.x - gfx[2].x * radius, pos.y - gfx[2].y * radius,
+			pos.x - gfx[2].x * radius,
+			pos.y - gfx[2].y * radius,
 			
 			pos.x - gfx[3].x * (radius + 5) - gfx[0].x *floppyValue,
 			pos.y - gfx[3].y * (radius + 5) - gfx[0].y *floppyValue);
@@ -675,12 +661,14 @@ class PlayerBall{
 		//back fin
 		floppyValue = 2 * (sin(anim +1) + 2 + scaleSpeed);		
 
-		quad(pos.x - gfx[0].x * radius, pos.y - gfx[0].y * radius,
+		quad(pos.x - gfx[0].x * radius,
+			pos.y - gfx[0].y * radius,
 			
 			pos.x - gfx[1].x * radius - gfx[0].x *floppyValue,
 			pos.y - gfx[1].y * radius - gfx[0].y *floppyValue,
 
-			pos.x - gfx[2].x * radius, pos.y - gfx[2].y * radius,
+			pos.x - gfx[2].x * radius,
+			pos.y - gfx[2].y * radius,
 			
 			pos.x - gfx[3].x * radius - gfx[0].x *floppyValue,
 			pos.y - gfx[3].y * radius - gfx[0].y *floppyValue);
