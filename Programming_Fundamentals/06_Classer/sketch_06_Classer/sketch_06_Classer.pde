@@ -135,6 +135,8 @@ void runStartScreen(float anim){
 	fill(255, ani, 153,255);
 	textSize(48);
 	text("Press space", width * 0.5, height * 0.5); 
+	fill(0, 0, 0, 32);
+	text("Press space", width * 0.5 + 2, height * 0.5 + 4);
 }
 
 
@@ -163,15 +165,20 @@ void runMainGame(){
 
 //font = loadFont("LetterGothicStd-32.vlw");
 void GameOver(int wave, float anim){
+	fill(255,0,0,3);
+	rect(0, 0, width, height);
+
 	fill(255, 0, 0,255);
-	textSize(48);
+	textSize(96);
 	textAlign(CENTER, CENTER);
 	text("GameOver", width * 0.5, 150); 
+	textSize(48);
 	text("Score: " + wave, width *0.5, 300); 
 
 	float ani = sin(anim) + 1;
 	ani = lerp(255, 128, ani * 0.5);
 	fill(255, ani, 153,255);
-	textSize(48);
 	text("Press space", width * 0.5, height -100); 
+	fill(0, 0, 0, 32);
+	text("Press space", width * 0.5 +2, height -96); 
 }
