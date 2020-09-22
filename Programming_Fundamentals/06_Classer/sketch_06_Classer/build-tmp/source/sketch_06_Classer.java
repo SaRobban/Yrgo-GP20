@@ -48,18 +48,97 @@ float intervall;
 BallManager emyBallManager;
 int numberOfBalls = 1;
 
+int score = 0;
+int hiScore = 0;
+
+int state = 1; //1game start 2game 3 gameoever
+
+
+enum GameState{
+	Start, MainGame, GameOver
+}
 
 public void setup(){
 	
 	frameRate(60);
+	mainGameInit();
+}
+
+
+public void mainGameInit(){
 	emyBallManager = new BallManager(numberOfBalls);
 	plBall = new PlayerBall(10, color(255, 0, 0, 255), new PVector(320,240), new PVector(0,1), 20, 3);
 }
+
 
 public void draw(){
 	deltaTime = ((millis() - timeSinceStart) * 0.001f);
 	intervall += deltaTime;
 
+	//check game state
+	if(state == 1){
+			runStartScreen(timeSinceStart * 0.01f);
+		if(space){
+			changeGameState();
+			space = false;
+
+		}
+	}else if(state == 2){
+		runMainGame();
+		if(!plBall.playerIsAlive()){
+			changeGameState();
+		}
+	}else{
+		GameOver(score);
+		if(space){
+			changeGameState();
+			space = false;
+		}
+	}
+
+
+	//print("state " + state, space);
+	endTime();
+}
+
+
+public void endTime(){
+	timeSinceStart = millis();
+}
+
+
+public void changeGameState(){
+	state++;
+	if(state > 3){
+		state = 1;
+	}
+
+	//Reset
+	if(state == 2)
+		mainGameInit();
+}
+
+
+public void runStartScreen(float anim){
+	background(64,96,128,255);
+
+	//text
+	fill(255, 200, 153,255);
+	textSize(96);
+	text("Goldfish", 100, 200);
+	textSize(32); 
+	text("in bubble hell", 275, 230); 
+	float ani = sin(anim) + 1;
+
+	ani = lerp(255, 128, ani * 0.5f);
+
+	fill(255, ani, 153,255);
+	textSize(48);
+	text("Press any key", 150, 400); 
+}
+
+
+public void runMainGame(){
 	if(intervall > 3){
 		emyBallManager.AddBall();
 		emyBallManager.NumberOfBalls();
@@ -76,35 +155,19 @@ public void draw(){
 	emyBallManager.DrawBalls();
 
 	plBall.DrawBall(timeSinceStart * 0.01f);
-	
-
-
+		
+	score = emyBallManager.GetNumberOfBalls();
 	HUD(plBall.GetHp(), emyBallManager.GetNumberOfBalls());
-
-	endTime();
 }
 
 
-public void endTime(){
-	timeSinceStart = millis();
+//font = loadFont("LetterGothicStd-32.vlw");
+public void GameOver(int wave){
+	fill(255, 0, 0,255);
+	textSize(48);
+	text("GameOver", 150, 100); 
+	text("Wave: " + wave, 320, 200); 
 }
-/*
-void LoopBalls(float dt){
-	for(int b = 0; b < balls.length; b++){
-		for(int bOther = 0; bOther < balls.length; bOther++){
-			if(bOther != b){
-				balls[b].CheckCollision(balls[bOther].GetPosition(), balls[bOther].GetRadius());
-			}
-		}
-		playerBall.CheckCollision(balls[b].GetPosition(), balls[b].GetRadius());
-	}
-
-	for(int i = 0; i < balls.length; i++){
-		balls[i].MovePos(100, dt);
-		balls[i].DrawBall();
-	}
-}
-*/
 class Ball{
 	int radius;
 	int col;
@@ -185,12 +248,17 @@ class Ball{
 		ellipse(pos.x + radius*0.5f, pos.y - radius * 0.5f, 5,3);
 	}
 }
+
+
+
+
 public void HUD(int hp, int wave){
 	fill(255, 102, 153,255);
 	textSize(32);
 	text("HP: " + hp, 320, 30); 
 	text("Wave: " + wave, 320, 60); 
 }
+
 class BallManager{
 	Ball[] emyBalls;
 	int baseColor = color(128,64,32,255);
@@ -301,6 +369,8 @@ int right;
 int up; 
 int down;
 
+boolean space = false;
+
 public void keyPressed(){
 	if(keyCode == LEFT || key == 'a'){
 		left = 1;
@@ -320,6 +390,11 @@ public void keyPressed(){
 
 	inputAxis.set(right - left, down - up);
 	inputAxis.normalize();
+
+	if(key == ' '){
+		space = true;
+	}
+
 }
 
 
@@ -342,6 +417,10 @@ public void keyReleased(){
 
 	inputAxis.set(right - left, down - up);
 	inputAxis.normalize();
+
+	if(key == ' '){
+		space = false;
+	}
 }
 /*
 class Input{
@@ -413,6 +492,14 @@ class PlayerBall{
 
 	public int GetHp(){
 		return hp;
+	}
+
+	public boolean playerIsAlive(){
+		if(hp > 0){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 

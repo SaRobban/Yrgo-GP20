@@ -34,6 +34,14 @@ class PlayerBall{
 		return hp;
 	}
 
+	public boolean playerIsAlive(){
+		if(hp > 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 
 	void Restrict(int maxRoomX, int maxRoomY){
 		//Restrict room

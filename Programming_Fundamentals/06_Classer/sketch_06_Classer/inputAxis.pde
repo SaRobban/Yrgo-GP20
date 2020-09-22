@@ -6,6 +6,8 @@ int right;
 int up; 
 int down;
 
+boolean space = false;
+
 void keyPressed(){
 	if(keyCode == LEFT || key == 'a'){
 		left = 1;
@@ -25,6 +27,11 @@ void keyPressed(){
 
 	inputAxis.set(right - left, down - up);
 	inputAxis.normalize();
+
+	if(key == ' '){
+		space = true;
+	}
+
 }
 
 
@@ -47,6 +54,10 @@ void keyReleased(){
 
 	inputAxis.set(right - left, down - up);
 	inputAxis.normalize();
+
+	if(key == ' '){
+		space = false;
+	}
 }
 /*
 class Input{
