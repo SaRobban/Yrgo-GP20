@@ -53,15 +53,19 @@ int hiScore = 0;
 
 int state = 1; //1game start 2game 3 gameoever
 
-
+//thx. Jacob Lundberg och Robin Bono
 enum GameState{
-	Start, MainGame, GameOver
-}
+	Title, MainGame, GameOver
+};
 
+GameState gState = GameState.Title;
+
+//enum 
 public void setup(){
 	
 	frameRate(60);
 	mainGameInit();
+	gState = GameState.Title;
 }
 
 
@@ -76,23 +80,20 @@ public void draw(){
 	intervall += deltaTime;
 
 	//check game state
-	if(state == 1){
+	if(gState == GameState.Title){
 			runStartScreen(timeSinceStart * 0.01f);
 		if(space){
 			changeGameState();
-			space = false;
-
 		}
-	}else if(state == 2){
+	}else if(gState == GameState.MainGame){
 		runMainGame();
 		if(!plBall.playerIsAlive()){
 			changeGameState();
 		}
 	}else{
-		GameOver(score);
+		GameOver(score, timeSinceStart *0.001f);
 		if(space){
 			changeGameState();
-			space = false;
 		}
 	}
 
@@ -103,38 +104,53 @@ public void draw(){
 
 
 public void endTime(){
+	space = false;
 	timeSinceStart = millis();
 }
 
 
 public void changeGameState(){
-	state++;
-	if(state > 3){
-		state = 1;
-	}
+	switch (gState)
+    {
+    	case Title:
+        	gState = GameState.MainGame;
+        break;
 
-	//Reset
-	if(state == 2)
-		mainGameInit();
+        case MainGame :
+	        mainGameInit();
+	        gState = GameState.GameOver;
+        break;	
+
+        case GameOver :
+        	gState = GameState.Title;
+        break;
+
+        default :
+       		gState = GameState.Title;
+    }
+	
+    print(" ", gState);
 }
 
 
 public void runStartScreen(float anim){
+
 	background(64,96,128,255);
 
 	//text
+	textAlign(CENTER, CENTER);
 	fill(255, 200, 153,255);
 	textSize(96);
-	text("Goldfish", 100, 200);
+	text("Goldfish", width * 0.5f, height * 0.5f - 160);
 	textSize(32); 
-	text("in bubble hell", 275, 230); 
+	text("in bubble hell", width * 0.5f + 90, height * 0.5f - 100); 
 	float ani = sin(anim) + 1;
 
 	ani = lerp(255, 128, ani * 0.5f);
 
 	fill(255, ani, 153,255);
 	textSize(48);
-	text("Press any key", 150, 400); 
+	text("Press space", width * 0.5f, height * 0.5f); 
 }
 
 
@@ -162,11 +178,18 @@ public void runMainGame(){
 
 
 //font = loadFont("LetterGothicStd-32.vlw");
-public void GameOver(int wave){
+public void GameOver(int wave, float anim){
 	fill(255, 0, 0,255);
 	textSize(48);
-	text("GameOver", 150, 100); 
-	text("Wave: " + wave, 320, 200); 
+	textAlign(CENTER, CENTER);
+	text("GameOver", width * 0.5f, 150); 
+	text("Score: " + wave, width *0.5f, 300); 
+
+	float ani = sin(anim) + 1;
+	ani = lerp(255, 128, ani * 0.5f);
+	fill(255, ani, 153,255);
+	textSize(48);
+	text("Press space", width * 0.5f, height -100); 
 }
 class Ball{
 	int radius;
@@ -249,14 +272,12 @@ class Ball{
 	}
 }
 
-
-
-
 public void HUD(int hp, int wave){
+	textAlign(LEFT, UP);
 	fill(255, 102, 153,255);
 	textSize(32);
-	text("HP: " + hp, 320, 30); 
-	text("Wave: " + wave, 320, 60); 
+	text("HP: " + hp, 10, 60); 
+	text("Wave: " + wave, 10, 30); 
 }
 
 class BallManager{
@@ -393,6 +414,7 @@ public void keyPressed(){
 
 	if(key == ' '){
 		space = true;
+		//print("space is true " , space);
 	}
 
 }
@@ -420,44 +442,9 @@ public void keyReleased(){
 
 	if(key == ' '){
 		space = false;
+		//print("space is false " , space);
 	}
 }
-/*
-class Input{
-	PVector inputAxis;
-	
-
-	Input(float x, float y){
-		inputAxis = new PVector(0,0);
-	}
-
-	PVector GetInput(){
-
-		inputAxis.set(0,0);
-
-		if(keyCode == LEFT || key == 'a'){
-			inputAxis.x -= left;
-		}
-
-		if(keyCode == RIGHT || key == 'd'){
-			inputAxis.x += right;
-		}
-
-		if(keyCode == UP || key == 'w'){
-			inputAxis.y -= up;
-		}
-
-		if(keyCode == DOWN || key == 's'){
-			inputAxis.y += down;
-		}
-
-		inputAxis.normalize();
-
-		
-		return inputAxis.copy();
-	}
-}
-*/
 class PlayerBall{
 	int radius;
 	int col;

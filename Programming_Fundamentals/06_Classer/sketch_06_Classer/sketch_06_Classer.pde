@@ -37,15 +37,19 @@ int hiScore = 0;
 
 int state = 1; //1game start 2game 3 gameoever
 
-
+//thx. Jacob Lundberg och Robin Bono
 enum GameState{
-	Start, MainGame, GameOver
-}
+	Title, MainGame, GameOver
+};
 
+GameState gState = GameState.Title;
+
+//enum 
 void setup(){
 	size(640,480);
 	frameRate(60);
 	mainGameInit();
+	gState = GameState.Title;
 }
 
 
@@ -60,23 +64,20 @@ void draw(){
 	intervall += deltaTime;
 
 	//check game state
-	if(state == 1){
+	if(gState == GameState.Title){
 			runStartScreen(timeSinceStart * 0.01);
 		if(space){
 			changeGameState();
-			space = false;
-
 		}
-	}else if(state == 2){
+	}else if(gState == GameState.MainGame){
 		runMainGame();
 		if(!plBall.playerIsAlive()){
 			changeGameState();
 		}
 	}else{
-		GameOver(score);
+		GameOver(score, timeSinceStart *0.001);
 		if(space){
 			changeGameState();
-			space = false;
 		}
 	}
 
@@ -87,38 +88,53 @@ void draw(){
 
 
 void endTime(){
+	space = false;
 	timeSinceStart = millis();
 }
 
 
 void changeGameState(){
-	state++;
-	if(state > 3){
-		state = 1;
-	}
+	switch (gState)
+    {
+    	case Title:
+        	gState = GameState.MainGame;
+        break;
 
-	//Reset
-	if(state == 2)
-		mainGameInit();
+        case MainGame :
+	        mainGameInit();
+	        gState = GameState.GameOver;
+        break;	
+
+        case GameOver :
+        	gState = GameState.Title;
+        break;
+
+        default :
+       		gState = GameState.Title;
+    }
+	
+    print(" ", gState);
 }
 
 
 void runStartScreen(float anim){
+
 	background(64,96,128,255);
 
 	//text
+	textAlign(CENTER, CENTER);
 	fill(255, 200, 153,255);
 	textSize(96);
-	text("Goldfish", 100, 200);
+	text("Goldfish", width * 0.5, height * 0.5 - 160);
 	textSize(32); 
-	text("in bubble hell", 275, 230); 
+	text("in bubble hell", width * 0.5 + 90, height * 0.5 - 100); 
 	float ani = sin(anim) + 1;
 
 	ani = lerp(255, 128, ani * 0.5);
 
 	fill(255, ani, 153,255);
 	textSize(48);
-	text("Press any key", 150, 400); 
+	text("Press space", width * 0.5, height * 0.5); 
 }
 
 
@@ -146,9 +162,16 @@ void runMainGame(){
 
 
 //font = loadFont("LetterGothicStd-32.vlw");
-void GameOver(int wave){
+void GameOver(int wave, float anim){
 	fill(255, 0, 0,255);
 	textSize(48);
-	text("GameOver", 150, 100); 
-	text("Wave: " + wave, 320, 200); 
+	textAlign(CENTER, CENTER);
+	text("GameOver", width * 0.5, 150); 
+	text("Score: " + wave, width *0.5, 300); 
+
+	float ani = sin(anim) + 1;
+	ani = lerp(255, 128, ani * 0.5);
+	fill(255, ani, 153,255);
+	textSize(48);
+	text("Press space", width * 0.5, height -100); 
 }

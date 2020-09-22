@@ -30,6 +30,7 @@ void keyPressed(){
 
 	if(key == ' '){
 		space = true;
+		//print("space is true " , space);
 	}
 
 }
@@ -57,41 +58,6 @@ void keyReleased(){
 
 	if(key == ' '){
 		space = false;
+		//print("space is false " , space);
 	}
 }
-/*
-class Input{
-	PVector inputAxis;
-	
-
-	Input(float x, float y){
-		inputAxis = new PVector(0,0);
-	}
-
-	PVector GetInput(){
-
-		inputAxis.set(0,0);
-
-		if(keyCode == LEFT || key == 'a'){
-			inputAxis.x -= left;
-		}
-
-		if(keyCode == RIGHT || key == 'd'){
-			inputAxis.x += right;
-		}
-
-		if(keyCode == UP || key == 'w'){
-			inputAxis.y -= up;
-		}
-
-		if(keyCode == DOWN || key == 's'){
-			inputAxis.y += down;
-		}
-
-		inputAxis.normalize();
-
-		
-		return inputAxis.copy();
-	}
-}
-*/
