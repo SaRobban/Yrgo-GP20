@@ -34,7 +34,6 @@ public class sketch_06_Classer extends PApplet {
 //Create input that gives the circle/character acceleration when it moves.
 //Make it deaccelerate down to a standstill when no key is pressed.
 //Use deltaTime to control movement every update.
-
 PlayerBall plBall;
 float plAccTime = 1; //seconds till full speed or stop is rached
 float plDeAccTime = 2; 
@@ -55,7 +54,7 @@ int state = 1; //1game start 2game 3 gameoever
 
 //thx. Jacob Lundberg och Robin Bono
 enum GameState{
-	Title, MainGame, GameOver
+	Title, MainGame, SaveLoad, GameOver
 };
 
 GameState gState = GameState.Title;
@@ -90,8 +89,11 @@ public void draw(){
 		if(!plBall.playerIsAlive()){
 			changeGameState();
 		}
+	}else if(gState == GameState.SaveLoad){
+		SaveAndLoad();
+		changeGameState();
 	}else{
-		GameOver(score, timeSinceStart *0.001f);
+		GameOver(score, hiScore, timeSinceStart *0.001f);
 		if(space){
 			changeGameState();
 		}
@@ -114,16 +116,20 @@ public void changeGameState(){
     {
     	case Title:
         	gState = GameState.MainGame;
-        break;
+       		break;
 
         case MainGame :
 	        mainGameInit();
-	        gState = GameState.GameOver;
-        break;	
+	        gState = GameState.SaveLoad;
+        	break;	
+
+        case SaveLoad :
+        	gState = GameState.GameOver;
+        	break;
 
         case GameOver :
         	gState = GameState.Title;
-        break;
+        	break;
 
         default :
        		gState = GameState.Title;
@@ -178,18 +184,32 @@ public void runMainGame(){
 	HUD(plBall.GetHp(), emyBallManager.GetNumberOfBalls());
 }
 
-
+public void SaveAndLoad(){
+	hiScore = LoadHiScore();
+	if(hiScore < score){
+		SaveHiScore(score);
+	}
+}
 //font = loadFont("LetterGothicStd-32.vlw");
-public void GameOver(int wave, float anim){
+public void GameOver(int currentScore, int oldScore, float anim){
 	fill(255,0,0,3);
 	rect(0, 0, width, height);
 
-	fill(255, 0, 0,255);
+	fill(255, 128, 0,255);
 	textSize(96);
 	textAlign(CENTER, CENTER);
 	text("GameOver", width * 0.5f, 150); 
 	textSize(48);
-	text("Score: " + wave, width *0.5f, 300); 
+
+
+
+	
+
+
+
+
+	text("Score: " + currentScore, width *0.5f, 250);
+	text("HighScore: " + oldScore, width * 0.5f, 320);
 
 	float ani = sin(anim) + 1;
 	ani = lerp(255, 128, ani * 0.5f);
@@ -292,6 +312,62 @@ public void HUD(int hp, int wave){
 	text("Wave: " + wave, 12, 34); 
 }
 
+  
+PrintWriter output;
+JSONObject json;
+/*
+void setup() {
+  // Create a new file in the sketch directory
+  output = createWriter("data/hiscore.json"); 
+}
+*/
+
+public void CreateNewFile() {
+
+  File myObj = new File("data/hiscore.json");
+  //myObj.CreateNewFile();
+  output = createWriter("positions.txt"); 
+
+  println("Created new file");
+
+  json = new JSONObject();
+
+  json.setInt("Highscore", 0);
+  saveJSONObject(json, "hiscore.json");
+}
+
+
+public void SaveHiScore(int score) {
+
+
+  //json = new JSONObject();
+  json.setInt("Highscore", score);
+
+  saveJSONObject(json, "data/hiscore.json");
+}
+
+
+
+public int LoadHiScore() {
+  String filename = "hiscore.json";
+
+  File f = new File(dataPath("hiscore.json"));
+
+  if (f.exists())
+  {
+    println("file exist");
+    json = loadJSONObject("data/hiscore.json");
+    int oldScore = json.getInt("Highscore");
+    return oldScore;
+    
+  }else{
+    println("Create new file");
+    
+
+   //CreateNewFile();
+    return 0;
+  }
+}
 class BallManager{
 	Ball[] emyBalls;
 	int baseColor = color(128,64,32,255);
@@ -380,11 +456,13 @@ class BallManager{
 	}
 
 	public Ball CreateRadnomBall(){
-		PVector randomSpawnPoint = new PVector(random(0, 1), random(0, 1));
+		PVector randomSpawnPoint = new PVector(random(-1, 1), random(-1, 1));
 		randomSpawnPoint = randomSpawnPoint.normalize();
 		PVector randomDir = randomSpawnPoint.copy();
 
-		randomSpawnPoint.mult(-spawnRange);
+		float diagonalLength = height * 0.5f + width * 0.5f;
+		
+		randomSpawnPoint.mult(-diagonalLength);
 		randomSpawnPoint.add(random(-10, 10),random(-10, 10));
 
 		return new Ball((int)random(5, 20), baseColor, randomSpawnPoint, randomDir, baseSpeed);

@@ -86,11 +86,13 @@ class BallManager{
 	}
 
 	Ball CreateRadnomBall(){
-		PVector randomSpawnPoint = new PVector(random(0, 1), random(0, 1));
+		PVector randomSpawnPoint = new PVector(random(-1, 1), random(-1, 1));
 		randomSpawnPoint = randomSpawnPoint.normalize();
 		PVector randomDir = randomSpawnPoint.copy();
 
-		randomSpawnPoint.mult(-spawnRange);
+		float diagonalLength = height * 0.5 + width * 0.5;
+		
+		randomSpawnPoint.mult(-diagonalLength);
 		randomSpawnPoint.add(random(-10, 10),random(-10, 10));
 
 		return new Ball((int)random(5, 20), baseColor, randomSpawnPoint, randomDir, baseSpeed);

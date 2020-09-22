@@ -18,7 +18,6 @@
 //Create input that gives the circle/character acceleration when it moves.
 //Make it deaccelerate down to a standstill when no key is pressed.
 //Use deltaTime to control movement every update.
-
 PlayerBall plBall;
 float plAccTime = 1; //seconds till full speed or stop is rached
 float plDeAccTime = 2; 
@@ -39,7 +38,7 @@ int state = 1; //1game start 2game 3 gameoever
 
 //thx. Jacob Lundberg och Robin Bono
 enum GameState{
-	Title, MainGame, GameOver
+	Title, MainGame, SaveLoad, GameOver
 };
 
 GameState gState = GameState.Title;
@@ -74,8 +73,11 @@ void draw(){
 		if(!plBall.playerIsAlive()){
 			changeGameState();
 		}
+	}else if(gState == GameState.SaveLoad){
+		SaveAndLoad();
+		changeGameState();
 	}else{
-		GameOver(score, timeSinceStart *0.001);
+		GameOver(score, hiScore, timeSinceStart *0.001);
 		if(space){
 			changeGameState();
 		}
@@ -98,16 +100,20 @@ void changeGameState(){
     {
     	case Title:
         	gState = GameState.MainGame;
-        break;
+       		break;
 
         case MainGame :
 	        mainGameInit();
-	        gState = GameState.GameOver;
-        break;	
+	        gState = GameState.SaveLoad;
+        	break;	
+
+        case SaveLoad :
+        	gState = GameState.GameOver;
+        	break;
 
         case GameOver :
         	gState = GameState.Title;
-        break;
+        	break;
 
         default :
        		gState = GameState.Title;
@@ -162,18 +168,32 @@ void runMainGame(){
 	HUD(plBall.GetHp(), emyBallManager.GetNumberOfBalls());
 }
 
-
+void SaveAndLoad(){
+	hiScore = LoadHiScore();
+	if(hiScore < score){
+		SaveHiScore(score);
+	}
+}
 //font = loadFont("LetterGothicStd-32.vlw");
-void GameOver(int wave, float anim){
+void GameOver(int currentScore, int oldScore, float anim){
 	fill(255,0,0,3);
 	rect(0, 0, width, height);
 
-	fill(255, 0, 0,255);
+	fill(255, 128, 0,255);
 	textSize(96);
 	textAlign(CENTER, CENTER);
 	text("GameOver", width * 0.5, 150); 
 	textSize(48);
-	text("Score: " + wave, width *0.5, 300); 
+
+
+
+	
+
+
+
+
+	text("Score: " + currentScore, width *0.5, 250);
+	text("HighScore: " + oldScore, width * 0.5, 320);
 
 	float ani = sin(anim) + 1;
 	ani = lerp(255, 128, ani * 0.5);
