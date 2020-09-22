@@ -1,3 +1,19 @@
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class Namn_Lesson01 extends PApplet {
+
 //Rober Sandh
 
 //Animation variables
@@ -12,22 +28,22 @@ int screenSizeY = 432;
 
 
 
-void setup()
+public void setup()
 { 
   //Set screen size (in pixels) for some reason does not take variables from above 
-  size(768, 432);
+  
   frameRate(120);
   //loop(); Turns out i dont need this WHY??? How long between frames!??! GWHAAAAAAA!!!!!!!!
 }
 
 //This is somehow constantly auto updated unknown how long between updates and output.
-void draw()
+public void draw()
 {
-  color bgC = color(20, 70, 50);
-  color gridC = color(20, 255, 128,32);
-  color textC = color(0, 0, 0,255);
+  int bgC = color(20, 70, 50);
+  int gridC = color(20, 255, 128,32);
+  int textC = color(0, 0, 0,255);
  // color textOutC = color(32, 128, 32,255);
-  color uLineC = color(32, 128, 64,255);
+  int uLineC = color(32, 128, 64,255);
   
 	//Setup basic attrebutes for Scene
 	SetupBasics(bgC, textC);
@@ -52,7 +68,7 @@ void draw()
   	GridFX(animGrid, gridC);
 
  	//Prevent lines to be drawn with zero length
-	if(anim > 0.0){
+	if(anim > 0.0f){
 	   
 	    //Create animation variable for letters
 		float f = anim;
@@ -65,9 +81,9 @@ void draw()
 	    float t = constrain(f-5,0,1);
 
 	    float fxOne = constrain(f-6,0,2);
-	    float fxTwo = constrain(f-6.25,0,2);
-	    float fxTre = constrain(f-6.5,0,2);
-	    float fxFor = constrain(f-6.75,0,2);
+	    float fxTwo = constrain(f-6.25f,0,2);
+	    float fxTre = constrain(f-6.5f,0,2);
+	    float fxFor = constrain(f-6.75f,0,2);
 	    float fxFiv = constrain(f-7,0,2);
 
 	    //-:Draw Name:-
@@ -120,7 +136,7 @@ void draw()
 		//-:Draw Special:-
 		int row = 0;
 		float lineH = letterHight / 4;
-		float lineOf = -lineH * 0.5;//lineH * 0.25;
+		float lineOf = -lineH * 0.5f;//lineH * 0.25;
 		letterNum++;
 		
 		//-:Draw Stripes:-
@@ -147,30 +163,30 @@ void draw()
 
 		//-:Draw UnderLine:-
 		letterNum+=2;
-		FxUnderLine(screenOffX, screenOffY + letterHight + 40, f * 0.1 * letterSpace * letterNum, uLineC);
+		FxUnderLine(screenOffX, screenOffY + letterHight + 40, f * 0.1f * letterSpace * letterNum, uLineC);
 	}
 }
 
 
 
-void SetupBasics(color bgC, color tC){
+public void SetupBasics(int bgC, int tC){
     background(bgC);
     stroke(tC);
-    strokeWeight(20.5);
+    strokeWeight(20.5f);
     noFill();
 }
 
-void AnimationController(){
+public void AnimationController(){
 //Move	
-	animGrid += 0.2;
+	animGrid += 0.2f;
 	if( animGrid > maxAnimF){
 		animGrid = 0;
 	}
 //Pingpong
 	if(rewerse){
-		anim -= 0.1;
+		anim -= 0.1f;
 	}else{
-		anim += 0.01;
+		anim += 0.01f;
 	}
 
   	if (anim <= 0) { 
@@ -186,13 +202,13 @@ void AnimationController(){
 	//anim = 10;
 }
 
-void GridFX(float animations, color gC){
+public void GridFX(float animations, int gC){
 	stroke(gC);
-    strokeWeight(2.5);
+    strokeWeight(2.5f);
     noFill();
 
-	float middle = screenSizeX * 0.5;
-	float xJump = screenSizeX * 0.1;
+	float middle = screenSizeX * 0.5f;
+	float xJump = screenSizeX * 0.1f;
 
 	//Draw perspective
 	for(int i = 0; i< 10; i++){
@@ -200,66 +216,76 @@ void GridFX(float animations, color gC){
 	}
 
   	//Draw Movement
- 	float f = animations * 0.1;
+ 	float f = animations * 0.1f;
 	for(int i = 0; i< 10; i++){
 		float ft = i+f;
-		float y = ft * ft * 0.05 * screenSizeY; 
+		float y = ft * ft * 0.05f * screenSizeY; 
 		line(0, y, screenSizeX, y);
 	}
 }
 
-void LetterLine(float animations){
+public void LetterLine(float animations){
 	stroke(lerp(20,64, animations), lerp(70, 255, animations), lerp(20, 128, animations), 255);
 	//stroke(255,255,255, lerp(0, 255, animations));
     strokeWeight(15);
 }
 
-void LetterLineBG(float animations){
+public void LetterLineBG(float animations){
 	stroke(lerp(20, 32, animations), lerp(70, 128, animations), lerp(50, 64, animations), 255);
 	//stroke(255,255,255, lerp(0, 255, animations));
     strokeWeight(20);
 }
 
-void DrawCapitalR(float x, float y, float lw, float lh){
+public void DrawCapitalR(float x, float y, float lw, float lh){
   	line(x, y, x, y + lh);
   	line(x , y + lh * 0.5f, x + lw, y + lh);
   	//Circle center X,Y, length, hight, startArc, endArc...
-  	arc(x, y + lh * 0.25, lw * 2, lh * 0.5, HALF_PI *3 , HALF_PI *5);
+  	arc(x, y + lh * 0.25f, lw * 2, lh * 0.5f, HALF_PI *3 , HALF_PI *5);
 }
 
-void DrawO(float x, float y, float lw, float lh){
-  	ellipse(x + lw *0.5, y + lh*0.75, lw, lh *0.5);
+public void DrawO(float x, float y, float lw, float lh){
+  	ellipse(x + lw *0.5f, y + lh*0.75f, lw, lh *0.5f);
 }
 
-void DrawB(float x, float y, float lw, float lh){
+public void DrawB(float x, float y, float lw, float lh){
 
   	line(x,y,x,y + lh);
-   	arc(x + lw *0.5, y + lh*0.75, lw, lh * 0.5, HALF_PI *2 , HALF_PI *5);
+   	arc(x + lw *0.5f, y + lh*0.75f, lw, lh * 0.5f, HALF_PI *2 , HALF_PI *5);
 }
 
-void DrawE(float x, float y, float lw, float lh){
-   	arc(x + lw *0.5, y + lh * 0.75, lw, lh * 0.5, HALF_PI, HALF_PI* 4);
-   	line(x, y + lh * 0.75, x+lw, y + lh * 0.75);
+public void DrawE(float x, float y, float lw, float lh){
+   	arc(x + lw *0.5f, y + lh * 0.75f, lw, lh * 0.5f, HALF_PI, HALF_PI* 4);
+   	line(x, y + lh * 0.75f, x+lw, y + lh * 0.75f);
 }
 
-void DrawR(float x, float y, float lw, float lh){
-  	arc(x + lw * 0.5, y + lh * 0.75, lw, lh * 0.5, HALF_PI *2, HALF_PI* 4);
-   	line(x, y + lh * 0.5, x, y + lh);
+public void DrawR(float x, float y, float lw, float lh){
+  	arc(x + lw * 0.5f, y + lh * 0.75f, lw, lh * 0.5f, HALF_PI *2, HALF_PI* 4);
+   	line(x, y + lh * 0.5f, x, y + lh);
 }
 
-void DrawT(float x, float y, float lw, float lh){
-  	line(x, y + lh * 0.5, x + lw, y + lh*0.5);
-  	line(x + lw * 0.5, y, x + lw * 0.5, y+lh);
+public void DrawT(float x, float y, float lw, float lh){
+  	line(x, y + lh * 0.5f, x + lw, y + lh*0.5f);
+  	line(x + lw * 0.5f, y, x + lw * 0.5f, y+lh);
 }
 
-void FxRect(float x, float y, float animation, float h, color c){
+public void FxRect(float x, float y, float animation, float h, int c){
     strokeWeight(0);
     fill(c);
 	rect(x, y, animation, h - 10,5);
 }
 
-void FxUnderLine(float x, float y ,float animation, color ulineC){
+public void FxUnderLine(float x, float y ,float animation, int ulineC){
 	  stroke(ulineC);
     strokeWeight(10);
 	line(x,y ,x + animation, y);
+}
+  public void settings() {  size(768, 432); }
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "Namn_Lesson01" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
 }

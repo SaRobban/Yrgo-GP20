@@ -22,8 +22,8 @@ void setup(){
     colliders[3] = new BoxCollider2D(320,-80,640,100, 0.0);
 
 //deco
-    colliders[4] = new BoxCollider2D(0,40,80,80, -0.523599);
-    colliders[5] = new BoxCollider2D(640,40,80,80, 0.523599);
+    colliders[4] = new BoxCollider2D(0,40,80,180, -0.523599);
+    colliders[5] = new BoxCollider2D(640,40,80,180, 0.523599);
 //basket
     //colliders[6] = new BoxCollider2D(100,400,0,40, -0.1);
     //colliders[7] = new BoxCollider2D(200,400,0,40, 0.1);
