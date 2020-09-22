@@ -5,7 +5,7 @@ class BallManager{
 	float baseSpeed = 100;
 	float spawnRange;
 
-
+/*
 	BallManager(int numberOfBalls, int r, color c, PVector p, PVector d, float s){
 		this.emyBalls = new Ball[numberOfBalls];
 
@@ -22,12 +22,12 @@ class BallManager{
 			this.emyBalls[b] = new Ball(r, baseColor, p, new PVector(random(0, 1), random(0, 1)), s);
 		}
 	}
+*/
 
+	BallManager(int nOB){
+		spawnRange = width * 0.5 + height * 0.5 + 20;
 
-	BallManager(int numberOfBalls){
-		spawnRange = width * 0.5 + 20;
-
-		this.emyBalls = new Ball[numberOfBalls];
+		this.emyBalls = new Ball[nOB];
 
 		for(int b = 0; b < this.emyBalls.length; b++){
 			this.emyBalls[b] = CreateRadnomBall();
@@ -67,6 +67,13 @@ class BallManager{
 		}
 	}
 
+	void RestrictBalls(){
+		for(int b = 0; b < emyBalls.length; b++){
+			
+			this.emyBalls[b].Restrict(width, height);
+		}
+	}
+
 
 	void MovePositions(float deltaT){
 		for(int b = 0; b < emyBalls.length; b++){
@@ -89,14 +96,12 @@ class BallManager{
 
 
 	Ball CreateRadnomBall(){
-		PVector randomSpawnPoint = new PVector(random(-1, 1), random(-1, 1));
-		randomSpawnPoint = randomSpawnPoint.normalize();
-		PVector randomDir = randomSpawnPoint.copy();
+		PVector randomDir = new PVector(random(-1, 1), random(-1, 1));
+		randomDir.normalize();
+		PVector randomSpawnPoint = randomDir.copy();
 
-		float diagonalLength = height * 0.5 + width * 0.5;
-
-		randomSpawnPoint.mult(-diagonalLength);
-		randomSpawnPoint.add(random(-10, 10),random(-10, 10));
+		randomSpawnPoint.mult(-spawnRange);
+		randomSpawnPoint.add(random(-10, 10) + width * 0.5 ,random(-10, 10) + height * 0.5);
 
 		return new Ball((int)random(5, 20), baseColor, randomSpawnPoint, randomDir, baseSpeed);
 	}

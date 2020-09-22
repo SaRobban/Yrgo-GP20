@@ -31,11 +31,9 @@ int numberOfBalls = 1;
 int score = 0;
 int hiScore = 0;
 
-int state = 1; //1game start 2game 3 gameoever
-
 //thx. Jacob Lundberg och Robin Bono
 enum GameState{
-	Title, MainGame, SaveLoad, GameOver
+	Title, GameInit, MainGame, SaveLoad, GameOver, MainInit
 };
 
 GameState gState = GameState.Title;
@@ -44,8 +42,13 @@ GameState gState = GameState.Title;
 public void setup(){
 	
 	frameRate(60);
-	mainGameInit();
+	mainMenuInit();
 	gState = GameState.Title;
+}
+
+public void mainMenuInit(){
+	emyBallManager = new BallManager(100);
+	print("numberOfBalls: ", emyBallManager.GetNumberOfBalls(), "\n");
 }
 
 
@@ -61,10 +64,14 @@ public void draw(){
 
 	//check game state
 	if(gState == GameState.Title){
-			runStartScreen(timeSinceStart * 0.01f);
+			runStartScreen();
 		if(space){
 			changeGameState();
 		}
+	}else if (gState == GameState.GameInit) {
+		mainGameInit();
+		changeGameState();
+	
 	}else if(gState == GameState.MainGame){
 		runMainGame();
 		if(!plBall.playerIsAlive()){
@@ -73,12 +80,17 @@ public void draw(){
 	}else if(gState == GameState.SaveLoad){
 		saveAndLoad();
 		changeGameState();
-	}else{
+	
+	}else if (gState == GameState.GameOver){
 		gameOver(score, hiScore, timeSinceStart * 0.01f);
 		if(space){
 			changeGameState();
 		}
+	}else if(gState == GameState.MainInit){
+			mainMenuInit();
+			changeGameState();
 	}
+
 	endTime();
 }
 
@@ -93,11 +105,14 @@ public void changeGameState(){
 	switch (gState)
     {
     	case Title:
-        	gState = GameState.MainGame;
+        	gState = GameState.GameInit;
+       		break;
+
+   		case GameInit :
+       		gState = GameState.MainGame;
        		break;
 
         case MainGame :
-	        mainGameInit();
 	        gState = GameState.SaveLoad;
         	break;	
 
@@ -106,6 +121,10 @@ public void changeGameState(){
         	break;
 
         case GameOver :
+        	gState = GameState.MainInit;
+        	break;
+
+        case MainInit : 
         	gState = GameState.Title;
         	break;
 
@@ -115,9 +134,13 @@ public void changeGameState(){
 }
 
 
-public void runStartScreen(float anim){
+public void runStartScreen(){
 
 	background(64,96,128,255);
+
+	emyBallManager.MovePositions(deltaTime);
+	emyBallManager.RestrictBalls();
+	emyBallManager.DrawBalls();
 
 	//text
 	textAlign(CENTER, CENTER);
@@ -140,7 +163,7 @@ public void runStartScreen(float anim){
 	fill(0, 0, 0, 32);
 	text("Press space", width * 0.5f, height * 0.5f);
 
-	float ani = sin(anim) + 1;
+	float ani = sin(timeSinceStart * 0.01f) + 1;
 	float aniC = ani * 32;
 	fill(aniC + 192, aniC + 64, aniC, 255);
 	
@@ -183,10 +206,13 @@ public void gameOver(int currentScore, int oldScore, float anim){
 	fill(255,0,0,3);
 	rect(0, 0, width, height);
 
-	fill(255, 128, 0,255);
-	textSize(96);
+	fill(0, 0, 0, 1);
+	textSize(62);
 	textAlign(CENTER, CENTER);
-	text("GameOver", width * 0.5f, 150); 
+	text("Your fish is dead!!", width * 0.5f + 5, 155);
+
+	fill(255, 128, 0,255);
+	text("Your fish is dead!!", width * 0.5f, 150); 
 	textSize(48);
 
 
@@ -200,14 +226,14 @@ public void gameOver(int currentScore, int oldScore, float anim){
 	
 	//Press to start
 	textSize(48);
-	fill(0, 0, 0, 32);
+	fill(0, 0, 0, 1);
 	text("Press space", width * 0.5f, height * 0.5f + 150);
 
 	float ani = sin(anim) + 1;
 	float aniC = ani * 32;
 	fill(aniC + 192, aniC + 64, aniC, 255);
 	
-	text("Press space", width * 0.5f - ani, height * 0.5f - ani + 150); 
+	text("Press space", width * 0.5f - 2, height * 0.5f + 148); 
 }
 class Ball{
 	int radius;
@@ -348,8 +374,8 @@ class BallManager{
 	float baseSpeed = 100;
 	float spawnRange;
 
-
-	BallManager(int numberOfBalls, int r, int c, PVector p, PVector d, float s){
+/*
+	BallManager(int numberOfBalls, int r, color c, PVector p, PVector d, float s){
 		this.emyBalls = new Ball[numberOfBalls];
 
 		for(int b = 0; b < this.emyBalls.length; b++){
@@ -365,12 +391,12 @@ class BallManager{
 			this.emyBalls[b] = new Ball(r, baseColor, p, new PVector(random(0, 1), random(0, 1)), s);
 		}
 	}
+*/
 
+	BallManager(int nOB){
+		spawnRange = width * 0.5f + height * 0.5f + 20;
 
-	BallManager(int numberOfBalls){
-		spawnRange = width * 0.5f + 20;
-
-		this.emyBalls = new Ball[numberOfBalls];
+		this.emyBalls = new Ball[nOB];
 
 		for(int b = 0; b < this.emyBalls.length; b++){
 			this.emyBalls[b] = CreateRadnomBall();
@@ -410,6 +436,13 @@ class BallManager{
 		}
 	}
 
+	public void RestrictBalls(){
+		for(int b = 0; b < emyBalls.length; b++){
+			
+			this.emyBalls[b].Restrict(width, height);
+		}
+	}
+
 
 	public void MovePositions(float deltaT){
 		for(int b = 0; b < emyBalls.length; b++){
@@ -432,14 +465,12 @@ class BallManager{
 
 
 	public Ball CreateRadnomBall(){
-		PVector randomSpawnPoint = new PVector(random(-1, 1), random(-1, 1));
-		randomSpawnPoint = randomSpawnPoint.normalize();
-		PVector randomDir = randomSpawnPoint.copy();
+		PVector randomDir = new PVector(random(-1, 1), random(-1, 1));
+		randomDir.normalize();
+		PVector randomSpawnPoint = randomDir.copy();
 
-		float diagonalLength = height * 0.5f + width * 0.5f;
-
-		randomSpawnPoint.mult(-diagonalLength);
-		randomSpawnPoint.add(random(-10, 10),random(-10, 10));
+		randomSpawnPoint.mult(-spawnRange);
+		randomSpawnPoint.add(random(-10, 10) + width * 0.5f ,random(-10, 10) + height * 0.5f);
 
 		return new Ball((int)random(5, 20), baseColor, randomSpawnPoint, randomDir, baseSpeed);
 	}

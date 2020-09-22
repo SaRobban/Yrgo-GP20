@@ -15,11 +15,9 @@ int numberOfBalls = 1;
 int score = 0;
 int hiScore = 0;
 
-int state = 1; //1game start 2game 3 gameoever
-
 //thx. Jacob Lundberg och Robin Bono
 enum GameState{
-	Title, MainGame, SaveLoad, GameOver
+	Title, GameInit, MainGame, SaveLoad, GameOver, MainInit
 };
 
 GameState gState = GameState.Title;
@@ -28,8 +26,13 @@ GameState gState = GameState.Title;
 void setup(){
 	size(640,480);
 	frameRate(60);
-	mainGameInit();
+	mainMenuInit();
 	gState = GameState.Title;
+}
+
+void mainMenuInit(){
+	emyBallManager = new BallManager(100);
+	print("numberOfBalls: ", emyBallManager.GetNumberOfBalls(), "\n");
 }
 
 
@@ -45,10 +48,14 @@ void draw(){
 
 	//check game state
 	if(gState == GameState.Title){
-			runStartScreen(timeSinceStart * 0.01);
+			runStartScreen();
 		if(space){
 			changeGameState();
 		}
+	}else if (gState == GameState.GameInit) {
+		mainGameInit();
+		changeGameState();
+	
 	}else if(gState == GameState.MainGame){
 		runMainGame();
 		if(!plBall.playerIsAlive()){
@@ -57,12 +64,17 @@ void draw(){
 	}else if(gState == GameState.SaveLoad){
 		saveAndLoad();
 		changeGameState();
-	}else{
+	
+	}else if (gState == GameState.GameOver){
 		gameOver(score, hiScore, timeSinceStart * 0.01);
 		if(space){
 			changeGameState();
 		}
+	}else if(gState == GameState.MainInit){
+			mainMenuInit();
+			changeGameState();
 	}
+
 	endTime();
 }
 
@@ -77,11 +89,14 @@ void changeGameState(){
 	switch (gState)
     {
     	case Title:
-        	gState = GameState.MainGame;
+        	gState = GameState.GameInit;
+       		break;
+
+   		case GameInit :
+       		gState = GameState.MainGame;
        		break;
 
         case MainGame :
-	        mainGameInit();
 	        gState = GameState.SaveLoad;
         	break;	
 
@@ -90,6 +105,10 @@ void changeGameState(){
         	break;
 
         case GameOver :
+        	gState = GameState.MainInit;
+        	break;
+
+        case MainInit : 
         	gState = GameState.Title;
         	break;
 
@@ -99,9 +118,13 @@ void changeGameState(){
 }
 
 
-void runStartScreen(float anim){
+void runStartScreen(){
 
 	background(64,96,128,255);
+
+	emyBallManager.MovePositions(deltaTime);
+	emyBallManager.RestrictBalls();
+	emyBallManager.DrawBalls();
 
 	//text
 	textAlign(CENTER, CENTER);
@@ -124,7 +147,7 @@ void runStartScreen(float anim){
 	fill(0, 0, 0, 32);
 	text("Press space", width * 0.5, height * 0.5);
 
-	float ani = sin(anim) + 1;
+	float ani = sin(timeSinceStart * 0.01) + 1;
 	float aniC = ani * 32;
 	fill(aniC + 192, aniC + 64, aniC, 255);
 	
@@ -167,10 +190,13 @@ void gameOver(int currentScore, int oldScore, float anim){
 	fill(255,0,0,3);
 	rect(0, 0, width, height);
 
-	fill(255, 128, 0,255);
-	textSize(96);
+	fill(0, 0, 0, 1);
+	textSize(62);
 	textAlign(CENTER, CENTER);
-	text("GameOver", width * 0.5, 150); 
+	text("Your fish is dead!!", width * 0.5 + 5, 155);
+
+	fill(255, 128, 0,255);
+	text("Your fish is dead!!", width * 0.5, 150); 
 	textSize(48);
 
 
@@ -184,12 +210,12 @@ void gameOver(int currentScore, int oldScore, float anim){
 	
 	//Press to start
 	textSize(48);
-	fill(0, 0, 0, 32);
+	fill(0, 0, 0, 1);
 	text("Press space", width * 0.5, height * 0.5 + 150);
 
 	float ani = sin(anim) + 1;
 	float aniC = ani * 32;
 	fill(aniC + 192, aniC + 64, aniC, 255);
 	
-	text("Press space", width * 0.5 - ani, height * 0.5 - ani + 150); 
+	text("Press space", width * 0.5 - 2, height * 0.5 + 148); 
 }
