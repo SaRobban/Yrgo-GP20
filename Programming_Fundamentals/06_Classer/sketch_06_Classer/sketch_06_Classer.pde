@@ -50,7 +50,7 @@ void draw(){
 		intervall = 0;
 	}
 
-	background(0);
+	background(64,96,128,255);
 	
 	plBall.ControllBall(inputAxis, plMaxSpeed, plDeAccTime, plDeAccTime, plTurnSpeed, deltaTime);
 	plBall.Restrict(width, height);
@@ -61,6 +61,10 @@ void draw(){
 
 	plBall.DrawBall(timeSinceStart * 0.01f);
 	
+
+
+	HUD(plBall.GetHp(), emyBallManager.GetNumberOfBalls());
+
 	endTime();
 }
 

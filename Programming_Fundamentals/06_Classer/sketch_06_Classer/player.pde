@@ -30,6 +30,10 @@ class PlayerBall{
 		return radius;
 	}
 
+	public int GetHp(){
+		return hp;
+	}
+
 
 	void Restrict(int maxRoomX, int maxRoomY){
 		//Restrict room
@@ -64,6 +68,7 @@ class PlayerBall{
 			this.dir = dirBetween.normalize();
 			this.dir.mult(-1);
 			this.scaleSpeed = 1;//ImpactSpeed
+			this.hp--;
 		}
 	}
 
@@ -106,6 +111,7 @@ class PlayerBall{
 			
 		}
 		ellipse(pos.x, pos.y, radius*2, radius*2);
+		
 		float floppyValue = 2 * (sin(anim) + 5 + scaleSpeed);
 		//fin
 		quad(pos.x - gfx[0].x * radius, pos.y - gfx[0].y * radius,
@@ -134,9 +140,10 @@ class PlayerBall{
 			pos.x - gfx[3].x * radius - gfx[0].x *floppyValue,
 			pos.y - gfx[3].y * radius - gfx[0].y *floppyValue);
 
-		fill(255);
-		ellipse(pos.x + 2, pos.y - 5, 10, 10);
+		fill(255,255,255,128);
+		ellipse(pos.x + 2, pos.y - 5, 10, 5);
 
+		fill(255,255,255,255);
 		ellipse(pos.x + dir.x * 10, pos.y + dir.y * 10, 10, 10);
 	
 		fill(0);

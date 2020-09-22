@@ -9,7 +9,7 @@ class Ball{
 		this.radius = r;
 		this.col = c;
 		this.pos = p;
-		this.dir = d.normalize();
+		this.dir = d;
 		this.speed = s;
 	}
 	
@@ -30,19 +30,19 @@ class Ball{
 	void Restrict(int maxRoomX, int maxRoomY){
 		//Restrict room
 		if(this.pos.x <= radius){
-			//pos.x = 0;
-			this.dir.x *= -1;
+			if(this.dir.dot(1,0,0) <= 0)
+				this.dir.x *= -1;
 		}else if(this.pos.x >= maxRoomX - radius){
-			//pos.x = maxRoomX;
-			this.dir.x *=-1;
+			if(this.dir.dot(-1,0,0) <= 0)
+				this.dir.x *= -1;
 		}
 
 		if(this.pos.y <= radius){
-			//pos.y = 0;
-			this.dir.y *= -1;
+			if(this.dir.dot(0,1,0) <= 0)
+				this.dir.y *= -1;
 		}else if(this.pos.y > maxRoomY - radius){
-			//pos.y = maxRoomY;
-			this.dir.y *= -1;
+			if(this.dir.dot(0,-1,0) <= 0)
+				this.dir.y *= -1;
 		}
 
 	}
@@ -69,8 +69,12 @@ class Ball{
 	}
 
 	void DrawBall(){
-		noStroke();
-		fill(col);
+		strokeWeight(3);
+		stroke(128,192,255,255);
+		//fill(col);
+		fill(128,192,255,128);
 		ellipse(pos.x, pos.y, radius*2, radius*2);
+		fill(255,255,255,64);
+		ellipse(pos.x + radius*0.5, pos.y - radius * 0.5, 5,3);
 	}
 }

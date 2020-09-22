@@ -66,7 +66,7 @@ public void draw(){
 		intervall = 0;
 	}
 
-	background(0);
+	background(64,96,128,255);
 	
 	plBall.ControllBall(inputAxis, plMaxSpeed, plDeAccTime, plDeAccTime, plTurnSpeed, deltaTime);
 	plBall.Restrict(width, height);
@@ -77,6 +77,10 @@ public void draw(){
 
 	plBall.DrawBall(timeSinceStart * 0.01f);
 	
+
+
+	HUD(plBall.GetHp(), emyBallManager.GetNumberOfBalls());
+
 	endTime();
 }
 
@@ -112,7 +116,7 @@ class Ball{
 		this.radius = r;
 		this.col = c;
 		this.pos = p;
-		this.dir = d.normalize();
+		this.dir = d;
 		this.speed = s;
 	}
 	
@@ -133,19 +137,19 @@ class Ball{
 	public void Restrict(int maxRoomX, int maxRoomY){
 		//Restrict room
 		if(this.pos.x <= radius){
-			//pos.x = 0;
-			this.dir.x *= -1;
+			if(this.dir.dot(1,0,0) <= 0)
+				this.dir.x *= -1;
 		}else if(this.pos.x >= maxRoomX - radius){
-			//pos.x = maxRoomX;
-			this.dir.x *=-1;
+			if(this.dir.dot(-1,0,0) <= 0)
+				this.dir.x *= -1;
 		}
 
 		if(this.pos.y <= radius){
-			//pos.y = 0;
-			this.dir.y *= -1;
+			if(this.dir.dot(0,1,0) <= 0)
+				this.dir.y *= -1;
 		}else if(this.pos.y > maxRoomY - radius){
-			//pos.y = maxRoomY;
-			this.dir.y *= -1;
+			if(this.dir.dot(0,-1,0) <= 0)
+				this.dir.y *= -1;
 		}
 
 	}
@@ -172,16 +176,28 @@ class Ball{
 	}
 
 	public void DrawBall(){
-		noStroke();
-		fill(col);
+		strokeWeight(3);
+		stroke(128,192,255,255);
+		//fill(col);
+		fill(128,192,255,128);
 		ellipse(pos.x, pos.y, radius*2, radius*2);
+		fill(255,255,255,64);
+		ellipse(pos.x + radius*0.5f, pos.y - radius * 0.5f, 5,3);
 	}
+}
+public void HUD(int hp, int wave){
+	fill(255, 102, 153,255);
+	textSize(32);
+	text("HP: " + hp, 320, 30); 
+	text("Wave: " + wave, 320, 60); 
 }
 class BallManager{
 	Ball[] emyBalls;
 	int baseColor = color(128,64,32,255);
 	int baseRadius = 5;
 	float baseSpeed = 100;
+
+	float spawnRange;
 
 
 	BallManager(int numberOfBalls, int r, int c, PVector p, PVector d, float s){
@@ -201,11 +217,19 @@ class BallManager{
 	}
 
 	BallManager(int numberOfBalls){
+		spawnRange = width * 0.5f + 20;
+
 		this.emyBalls = new Ball[numberOfBalls];
 
 		for(int b = 0; b < this.emyBalls.length; b++){
 			this.emyBalls[b] = CreateRadnomBall();
 		}
+ 	}
+
+
+ 	public int GetNumberOfBalls(){
+ 		int l = emyBalls.length;
+ 		return l;
  	}
 
 	public void CheckSelfCollitionsAnd(){
@@ -255,7 +279,14 @@ class BallManager{
 	}
 
 	public Ball CreateRadnomBall(){
-		return new Ball((int)random(5, 20), baseColor, new PVector(100 + 10, 100 + 10), new PVector(random(0, 1), random(0, 1)), baseSpeed);
+		PVector randomSpawnPoint = new PVector(random(0, 1), random(0, 1));
+		randomSpawnPoint = randomSpawnPoint.normalize();
+		PVector randomDir = randomSpawnPoint.copy();
+
+		randomSpawnPoint.mult(-spawnRange);
+		randomSpawnPoint.add(random(-10, 10),random(-10, 10));
+
+		return new Ball((int)random(5, 20), baseColor, randomSpawnPoint, randomDir, baseSpeed);
 	}
 
 	public void NumberOfBalls(){
@@ -380,6 +411,10 @@ class PlayerBall{
 		return radius;
 	}
 
+	public int GetHp(){
+		return hp;
+	}
+
 
 	public void Restrict(int maxRoomX, int maxRoomY){
 		//Restrict room
@@ -414,6 +449,7 @@ class PlayerBall{
 			this.dir = dirBetween.normalize();
 			this.dir.mult(-1);
 			this.scaleSpeed = 1;//ImpactSpeed
+			this.hp--;
 		}
 	}
 
@@ -456,6 +492,7 @@ class PlayerBall{
 			
 		}
 		ellipse(pos.x, pos.y, radius*2, radius*2);
+		
 		float floppyValue = 2 * (sin(anim) + 5 + scaleSpeed);
 		//fin
 		quad(pos.x - gfx[0].x * radius, pos.y - gfx[0].y * radius,
@@ -484,9 +521,10 @@ class PlayerBall{
 			pos.x - gfx[3].x * radius - gfx[0].x *floppyValue,
 			pos.y - gfx[3].y * radius - gfx[0].y *floppyValue);
 
-		fill(255);
-		ellipse(pos.x + 2, pos.y - 5, 10, 10);
+		fill(255,255,255,128);
+		ellipse(pos.x + 2, pos.y - 5, 10, 5);
 
+		fill(255,255,255,255);
 		ellipse(pos.x + dir.x * 10, pos.y + dir.y * 10, 10, 10);
 	
 		fill(0);

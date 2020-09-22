@@ -4,6 +4,8 @@ class BallManager{
 	int baseRadius = 5;
 	float baseSpeed = 100;
 
+	float spawnRange;
+
 
 	BallManager(int numberOfBalls, int r, color c, PVector p, PVector d, float s){
 		this.emyBalls = new Ball[numberOfBalls];
@@ -22,11 +24,19 @@ class BallManager{
 	}
 
 	BallManager(int numberOfBalls){
+		spawnRange = width * 0.5 + 20;
+
 		this.emyBalls = new Ball[numberOfBalls];
 
 		for(int b = 0; b < this.emyBalls.length; b++){
 			this.emyBalls[b] = CreateRadnomBall();
 		}
+ 	}
+
+
+ 	public int GetNumberOfBalls(){
+ 		int l = emyBalls.length;
+ 		return l;
  	}
 
 	void CheckSelfCollitionsAnd(){
@@ -76,7 +86,14 @@ class BallManager{
 	}
 
 	Ball CreateRadnomBall(){
-		return new Ball((int)random(5, 20), baseColor, new PVector(100 + 10, 100 + 10), new PVector(random(0, 1), random(0, 1)), baseSpeed);
+		PVector randomSpawnPoint = new PVector(random(0, 1), random(0, 1));
+		randomSpawnPoint = randomSpawnPoint.normalize();
+		PVector randomDir = randomSpawnPoint.copy();
+
+		randomSpawnPoint.mult(-spawnRange);
+		randomSpawnPoint.add(random(-10, 10),random(-10, 10));
+
+		return new Ball((int)random(5, 20), baseColor, randomSpawnPoint, randomDir, baseSpeed);
 	}
 
 	void NumberOfBalls(){
