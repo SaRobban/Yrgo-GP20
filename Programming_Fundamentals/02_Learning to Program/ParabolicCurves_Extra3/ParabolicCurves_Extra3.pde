@@ -16,6 +16,7 @@ void setup()
 	PVector gridCenter = new PVector((float)width * 0.5, (float)height * 0.5);
 	pc = new ParabolicCurve(gridCenter, 2, 30, 4);
 
+	background(255,255,255,255);
 	
 }
 
@@ -35,7 +36,7 @@ void draw(){
 /**/			if(newArmNumber > 10){																		/**/
 /**/				newArmNumber = 3;																		/**/
 /**/			}																							/**/
-/**/			pc = new ParabolicCurve(gridCenter, newArmNumber, 30, 2);									/**/
+/**/			pc = new ParabolicCurve(gridCenter, 3, 30, 2);									/**/
 /**/			coolDown = true;																			/**/
 /**/		}																								/**/
 /**/	}else if(animTre > 0.9){																			/**/
@@ -52,7 +53,9 @@ void draw(){
 
 
 
-	background(0,0,0,255);
+	//background(0,0,0,255);
+	fill(255,255,255,32);
+	rect(0, 0, width, height);
 	//pc.MoveMe(f * 10 + 320, f * 10 + 240);
 	pc.RotateMe(frame * 0.01);
 	pc.WobbleMe(animOne * 0.25);
