@@ -4,8 +4,8 @@ class Direction{
 	int sizeX;
 	int sizeY;
 
-		String head;
-				String display;
+	String head;
+	String display;
 
 	Direction(int posX, int posY, int sizeX, int sizeY){
 		this.posX = posX;

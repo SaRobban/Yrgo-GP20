@@ -29,18 +29,25 @@ int colOne = color (50,52,46,255);
 int colTwo = color (70,72,66,255);
 int colTre = color (40,41,35,255);
 
+int cInfoText = color(0, 0, 0, 255);
+
 public void setup(){
 	//noLoop();
 	
-	cordSys = new XYaxlar(offset, offset, 320, 320, cordScale, colOne, colTwo);
-	//dir = new Direction(340,20,150,50);
+	cordSys = new XYaxlar(offset, offset, 320, 320, cordScale, colOne, colTwo, cInfoText);
+	reDraw();
 }
 
 
 public void draw(){
+	//background(bg);
+	//cordSys.DrawXY();
+
+}	
+
+public void reDraw(){
 	background(bg);
 	cordSys.DrawXY();
-
 }	
 
 public void mousePressed() {
@@ -53,43 +60,54 @@ public void mousePressed() {
 		rc = true;
 
 	cordSys.Clicked(mouseX, mouseY, rc, lc);
+
+	reDraw();
 }
 
 public boolean Contains(float posX, float posY, float minX, float maxX, float minY, float maxY){
 	if(posX < maxX && posX > minX){
-		if(posY < maxY && posY > offset)
+		if(posY < maxY && posY > minY)
 			return true;
 	}
 	return false;
 }
+class Arrow{
+	int id;
+	PVector from;
+	PVector to;
+	int col;
+	int thickness;
+	Arrow(int id, PVector from, PVector to, int col, int thickness){
+		this.id = id;
+		this.from = from.copy();
+		this.to = to.copy();
+		this.col = col;
+		this.thickness = thickness;
 
-public void Arrow(PVector from, PVector to, int col){
+		PVector subDir = PVector.sub(from, to);
+		subDir.normalize();
+		subDir.mult(thickness * 2);
+		this.from.sub(subDir);
+		this.to.add(subDir);
+	}
 
-	
+	public void Draw(){
+		stroke(col);
+		strokeWeight(thickness);	
+		line(from.x, from.y, to.x, to.y);
 
-	stroke(col);	
-	line(from.x, from.y, to.x, to.y);
+		float rad = PI * 0.25f;
 
+		PVector dir = PVector.sub(from, to);
+		dir = dir.normalize();
+		dir = dir.rotate(rad);
+		dir.mult(5);
 
-	float rad = PI * 0.25f;
+		line(to.x, to.y, to.x + dir.x, to.y + dir.y);
 
-	PVector dir = new PVector();
-
-	dir.x = from.x - to.x;
-	dir.y = from.y - to.y;
-
-	//dir.set(from.sub(to));  //BUG???????????????
-
-	dir = dir.normalize();
-	dir = dir.rotate(rad);
-	dir.mult(10);
-
-
-	line(to.x, to.y, to.x + dir.x, to.y + dir.y);
-
-	dir = dir.rotate(rad * -2);
-	line(to.x, to.y, to.x + dir.x, to.y + dir.y);
-
+		dir = dir.rotate(rad * -2);
+		line(to.x, to.y, to.x + dir.x, to.y + dir.y);
+	}
 }
 class BDisplay{
 	int posX;
@@ -110,14 +128,32 @@ class BDisplay{
 	}
 
 	public void SetText(String header, String display){
-		print(header);
+		//print(header);
 		this.head = header;
 		this.display = display;
 	}
 
-	public void Draw(int col, int fill){
-		stroke(col);
-		fill(fill);
+	//float posX, float posY, float minX, float maxX, float minY, float maxY
+	public boolean Clicked(float clickPosX, float clickPosY){
+		
+
+		if(clickPosX < posX + sizeX && clickPosX > posX){
+			if(clickPosY < posY + sizeY && clickPosY > posY){
+				//print("clicked me " + head);
+				return true;
+			}
+		}
+		return false;
+
+
+
+		//return(Contains(clickPosX, clickPosY, posX, posY, posX + sizeX, posY + sizeY));
+	}
+
+	public void Draw(int col, int cFill, int cInfotext){
+		
+		fill(cFill);
+		noStroke();
 		rect(posX, posY, sizeX, sizeY);
 
 
@@ -125,8 +161,8 @@ class BDisplay{
 			line(posX, posY, posX + sizeX, posY + sizeY);
 		}else{
 			textSize(12);
-			text(head, posX, posY);
-			fill(255,0,0);
+			text(head, posX, posY - 2);
+			fill(cInfotext);
 			text(display, posX + 10, posY + 15);
 		}
 	}
@@ -137,8 +173,8 @@ class Direction{
 	int sizeX;
 	int sizeY;
 
-		String head;
-				String display;
+	String head;
+	String display;
 
 	Direction(int posX, int posY, int sizeX, int sizeY){
 		this.posX = posX;
@@ -175,13 +211,15 @@ class Direction{
 
 
 class Point{
+	String name;
 	PVector cord;
 	PVector pos;
 	float radius;
 	int col;
 	int cordScale;
 
-	Point(int x, int y, int off, float radius, int col, int scal){
+	Point(String name, int x, int y, int off, float radius, int col, int scal){
+		this.name = name;
 		this.pos = new PVector(x,y);
 		this.radius = radius;
 		this.col = col;
@@ -198,7 +236,9 @@ class Point{
 		cord.set(x - off, y - off);
 	}
 
-
+	public PVector GetPosition(){
+		return pos;
+	}
 
 	public float GetFakePosX(){
 		return cord.x / cordScale;
@@ -211,7 +251,7 @@ class Point{
 	public void DrawCord(){
 		textSize(12);
 		fill(col);
-		text(("X" + (cord.x / cordScale) + "\nY" + (cord.y / cordScale)), pos.x + radius * 2, pos.y + radius);
+		text(name + "\n" + "X" + (cord.x / cordScale) + "\nY" + (cord.y / cordScale), pos.x + radius * 2, pos.y + radius);
 	}
 	public void Draw(){
 		fill(col);
@@ -224,7 +264,9 @@ class Point{
 class XYaxlar{
 	PVector origo;
 	PVector xAxis;
+	Arrow arrowX;
 	PVector yAxis;
+	Arrow arrowY;
 	int cordScale;
 
 	Point pOne;
@@ -232,14 +274,28 @@ class XYaxlar{
 
 	int colOne;
 	int colTwo;
+	int colInfoText;
+	int colArrow;
+	int arrowThickness;
 
-	BDisplay direction; 
+	BDisplay direction;
+	BDisplay directionNormal;
 	BDisplay sqrMagnitude;
 	BDisplay distance;
+	BDisplay dotProduct;
+
+	PVector directionV;
+	PVector directionNV;
+	PVector sqrMagnitudeVOne;
+	PVector sqrMagnitudeVTwo;
+
+	//scalar
+	//angle
 	
+	Arrow allArrows[];
 
 	//Constructor
-	XYaxlar(int origoX, int origoY, int endX, int endY, int scal, int cOne, int cTwo){
+	XYaxlar(int origoX, int origoY, int endX, int endY, int scal, int cOne, int cTwo, int cInfoText){
  
 		this.origo = new PVector(origoX, origoY);
 		this.xAxis = new PVector(endX, origoY);
@@ -247,23 +303,47 @@ class XYaxlar{
 		this.cordScale = scal;
 		this.colOne = cOne;
 		this.colTwo = cTwo;
+		this.colInfoText = cInfoText;
+		this.colArrow = color(255, 255, 0, 255);
+		this.arrowThickness = 3;
 
-		this.direction = new BDisplay(origoX, endY + 20, 200, 20);
-		this.sqrMagnitude = new BDisplay(origoX, endY + 60, 200, 40);
+		this.direction = new BDisplay(origoX, endY + 20, 140, 40);
+		this.directionNormal = new BDisplay(origoX + 160, endY + 20, 140, 40);
+		this.sqrMagnitude = new BDisplay(origoX, endY + 80, 300, 40);
 
-		this.distance = new BDisplay(origoX, endY + 120, 200, 40);
+		this.distance = new BDisplay(origoX, endY + 140, 300, 40);
+
+		this.allArrows = new Arrow[2];
+		this.allArrows[0] = new Arrow(0, origo, xAxis, color(colTwo), 1);
+		this.allArrows[1] = new Arrow(1, origo, yAxis, color(colTwo), 1);
+
 	}
 
 	public void DrawXY(){
+
+
+
+
+		//draw grid
 		stroke(colOne);
+		strokeWeight(1);
 		for(int x = 0; x < xAxis.x -cordScale; x += cordScale){
 			line(origo.x + x, origo.y, origo.x + x, yAxis.y);
 			line(origo.x, origo.y + x, xAxis.x, origo.y + x);
 		}
 
-		Arrow(origo, xAxis, color(colTwo));
-		Arrow(origo, yAxis, color(colTwo));
+		//Draw Boxes and functions
+		direction.Draw(colOne, colTwo, colInfoText);
+		directionNormal.Draw(colOne, colTwo, colInfoText);
 
+		sqrMagnitude.Draw(colOne, colTwo, colInfoText);
+		distance.Draw(colOne, colTwo, colInfoText);
+
+		for(int i = 0; i < allArrows.length; i++){
+			allArrows[i].Draw();
+		}
+
+		//Draw Vectors
 		if(pOne != null){
 			pOne.Draw();
 			pOne.DrawCord();
@@ -274,12 +354,7 @@ class XYaxlar{
 			pTwo.DrawCord();
 		}
 
-
-
-		//Draw Boxes
-		direction.Draw(colOne, colTwo);
-		sqrMagnitude.Draw(colOne, colTwo);
-		distance.Draw(colOne, colTwo);
+		
 	}
 
 	public int GetSizeX(){
@@ -291,6 +366,32 @@ class XYaxlar{
 	}
 
 	public void Clicked(float x, float y, boolean rc, boolean lc){
+		
+		//Clicked functions
+		if(pOne != null && pTwo != null){
+			removeNotNeededArrow();
+			if(direction.Clicked(x, y)){
+				addArrow(new Arrow(allArrows.length, pOne.GetPosition(), pTwo.GetPosition(), colArrow, 3));
+				//print(allArrows.length);
+			}else if(directionNormal.Clicked(x,y)){
+				//addArrow(new Arrow(allArrows.length, pOne.GetPosition(), PVector.add(pOne.GetPosition(), PVector.mult(PVector.sub(pTwo.GetPosition(), pOne.GetPosition()).normalize(),22)), colArrow, 3));
+				addArrow(new Arrow(allArrows.length, pOne.GetPosition(), directionNV, colArrow, 3));
+			}else if(sqrMagnitude.Clicked(x,y)){
+				addArrow(new Arrow(allArrows.length, pOne.GetPosition(), sqrMagnitudeVOne, colArrow, 3));
+				addArrow(new Arrow(allArrows.length, pOne.GetPosition(), sqrMagnitudeVTwo, colTwo, 3));
+
+			}else if(distance.Clicked(x,y)){
+				addArrow(new Arrow(allArrows.length, pOne.GetPosition(), pTwo.GetPosition(), colArrow, 3));
+
+			}else{
+				removeNotNeededArrow();
+			}
+		}
+
+
+
+
+		//Clicked vectorfield
 		if(Contains(x, y, origo.x, xAxis.x, origo.y, yAxis.y)){
 
 			int posX = round(x * 0.1f);
@@ -300,18 +401,20 @@ class XYaxlar{
 			
 			if (lc) {
 				if(pOne == null){
-					pOne = new Point(posX, posY, offset, 5.0f, color(0,255,0,255), cordScale);
+					pOne = new Point("V1", posX, posY, offset, 5.0f, color(0,255,0,255), cordScale);
 				}
 				pOne.setPosition(posX, posY, offset);
 			}
 			else if (rc) 
 			{
 				if(pTwo == null){
-					pTwo = new Point(posX, posY, offset, 5.0f, color(255,0,0,255), cordScale);
+					pTwo = new Point("V2", posX, posY, offset, 5.0f, color(255,0,0,255), cordScale);
 				}
 				pTwo.setPosition(posX, posY, offset);
 			}
 		}
+
+		
 
 		Calculate();
 	}
@@ -323,25 +426,99 @@ class XYaxlar{
 			PVector vectOne = new PVector(pOne.GetFakePosX(), pOne.GetFakePosY());
 			PVector vectTwo = new PVector(pTwo.GetFakePosX(), pTwo.GetFakePosY());
 
-			PVector dir = vectTwo.sub(vectOne);
-			direction.SetText("Direction", ("V2 - V1 = " + "dirX " + dir.x + " dirY " + dir.y));// ("V1 - V2 = " +(String)dir));
+			//Direction
+			PVector dir = PVector.sub(vectTwo, vectOne);
+			direction.SetText("Direction", ("V2 - V1 = direction\n" + "dirX " + nf(dir.x,0,1) + "  dirY " + nf(dir.y,0,1)));// ("V1 - V2 = " +(String)dir));
+			
+			directionV = PVector.add(pOne.GetPosition(), dir);
 
+
+			PVector dirN = dir.copy();
+			dirN.normalize();
+
+			directionNV = PVector.add(pOne.GetPosition(), PVector.mult(dirN, cordScale + arrowThickness * 2));//compansate for arrow shotening
+
+			//dir rot (dir square)
+			directionNormal.SetText("Direction normalized", "dir/√dir²=normalized" +"\n" + "dirX " + nf(dirN.x,0,2) + "  dirY " + nf(dirN.y,0,2));
 			
 
-			PVector comp = new PVector(pOne.GetFakePosX(), pOne.GetFakePosY());
-			float compSqr = comp.magSq();
+
+			PVector compDir = new PVector(pOne.GetFakePosX(), pOne.GetFakePosY());
+			compDir.mult(-1);
+			float compSqr = compDir.magSq();
 			float vecSqr = dir.magSq();
+			compDir.normalize();
 
 			if(compSqr < vecSqr){
-				sqrMagnitude.SetText("Squared Magnitude", ("Dir * Dir = " + vecSqr + "\n" + "V1 is closer to Origo then V2"));
+				sqrMagnitude.SetText("Squared Magnitude", ("Direction * Direction = Squared Magnitude" + "\n" + "V1 is closer to Origo then V2  (" + nf(vecSqr,0,2) + ")"));
 			}else{
-				sqrMagnitude.SetText("Squared Magnitude", ("Dir * Dir = " + vecSqr + "\n" + "V1 is closer to V2 then Origo"));
+				sqrMagnitude.SetText("Squared Magnitude", ("Direction * Direction = Squared Magnitude" + "\n" + "V1 is closer to V2 then Origo  (" + nf(vecSqr,0,2) + ")"));
 			}
+			sqrMagnitudeVOne = PVector.add(pOne.GetPosition(), PVector.mult(dirN, vecSqr * cordScale));
+			sqrMagnitudeVTwo = PVector.add(pOne.GetPosition(), PVector.mult(compDir, compSqr * cordScale));
 
 			float dist = dir.mag();
-			distance.SetText("Distance", "√ (dir * dir) = " + dist + "\n"+"V1 distance to V2");
+			distance.SetText("Distance", "√ (Squared Magnitude) = Correct Distance" + "\n" + "V1 distance to V2 = " +  nf(dist,0,2));
 		}
 	}
+
+
+	public void addArrow(Arrow arrow){
+		Arrow[] newArrows = new Arrow[allArrows.length+1];
+		for(int i = 0; i < allArrows.length; i++){
+			newArrows[i] = allArrows[i];
+		}
+		newArrows[allArrows.length] = arrow;
+
+		allArrows = new Arrow[newArrows.length];
+		arrayCopy(newArrows, allArrows);
+	}
+
+	public void removeArrow(Arrow arrow){
+		Arrow newArrows[] = new Arrow[allArrows.length-1];
+
+		int r = 0;
+		for(int i = 0; i < allArrows.length; i++){
+			if(arrow != allArrows[i]){
+				newArrows[r] = allArrows[i];
+				r++;
+			}
+		}
+		arrayCopy(newArrows, allArrows);
+	}
+
+	public void removeNotNeededArrow(){
+		allArrows = new Arrow[2];
+		allArrows[0] = new Arrow(0, origo, xAxis, color(colTwo), 1);
+		allArrows[1] = new Arrow(1, origo, yAxis, color(colTwo), 1);
+	}
+/*
+	void Arrow(PVector from, PVector to, color col, int thickness){
+
+		stroke(col);
+		strokeWeight(thickness);
+		line(from.x, from.y, to.x, to.y);
+
+
+		float rad = PI * 0.25;
+
+		PVector dir = new PVector();
+
+		dir.x = from.x - to.x;
+		dir.y = from.y - to.y;
+
+		dir = dir.normalize();
+		dir = dir.rotate(rad);
+		dir.mult(10);
+
+
+		line(to.x, to.y, to.x + dir.x, to.y + dir.y);
+
+		dir = dir.rotate(rad * -2);
+		line(to.x, to.y, to.x + dir.x, to.y + dir.y);
+
+	}
+*/
 }
   public void settings() { 	size(512,512); }
   static public void main(String[] passedArgs) {

@@ -17,14 +17,32 @@ class BDisplay{
 	}
 
 	void SetText(String header, String display){
-		print(header);
+		//print(header);
 		this.head = header;
 		this.display = display;
 	}
 
-	void Draw(color col, color fill){
-		stroke(col);
-		fill(fill);
+	//float posX, float posY, float minX, float maxX, float minY, float maxY
+	boolean Clicked(float clickPosX, float clickPosY){
+		
+
+		if(clickPosX < posX + sizeX && clickPosX > posX){
+			if(clickPosY < posY + sizeY && clickPosY > posY){
+				//print("clicked me " + head);
+				return true;
+			}
+		}
+		return false;
+
+
+
+		//return(Contains(clickPosX, clickPosY, posX, posY, posX + sizeX, posY + sizeY));
+	}
+
+	void Draw(color col, color cFill, color cInfotext){
+		
+		fill(cFill);
+		noStroke();
 		rect(posX, posY, sizeX, sizeY);
 
 
@@ -32,8 +50,8 @@ class BDisplay{
 			line(posX, posY, posX + sizeX, posY + sizeY);
 		}else{
 			textSize(12);
-			text(head, posX, posY);
-			fill(255,0,0);
+			text(head, posX, posY - 2);
+			fill(cInfotext);
 			text(display, posX + 10, posY + 15);
 		}
 	}
