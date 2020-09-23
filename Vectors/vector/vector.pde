@@ -26,13 +26,14 @@ void setup(){
 void draw(){
 	//background(bg);
 	//cordSys.DrawXY();
-
 }	
+
 
 void reDraw(){
 	background(bg);
 	cordSys.DrawXY();
 }	
+
 
 void mousePressed() {
 	boolean lc = false;
@@ -47,6 +48,7 @@ void mousePressed() {
 
 	reDraw();
 }
+
 
 boolean Contains(float posX, float posY, float minX, float maxX, float minY, float maxY){
 	if(posX < maxX && posX > minX){

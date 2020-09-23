@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream; 
 import java.io.IOException; 
 
-public class sketch_06_Classer extends PApplet {
+public class ClassAndObjects extends PApplet {
 
 //Add size and color to the ball class.
 PlayerBall plBall;
@@ -353,20 +353,25 @@ public void SaveHiScore(int score) {
 
 
 public int LoadHiScore() {
-  File f = new File(dataPath("hiscore.json"));
+  //File file = new File(dataPath("hiscore.json"));
 
-  if (f.exists()){
+  //if (file.exists()){
     println("file exist");
     json = loadJSONObject("data/hiscore.json");
     int oldScore = json.getInt("Highscore");
     return oldScore;
-    
+  /*  
   }else{
     println("Try to create new file");
     CreateNewFile();
     return score;
   }
+  */
 }
+
+//scala cordinater
+//push
+//pop
 class BallManager{
 	Ball[] emyBalls;
 	int baseColor = color(128,64,32,255);
@@ -716,7 +721,7 @@ class PlayerBall{
 }
   public void settings() { 	size(640,480); }
   static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "sketch_06_Classer" };
+    String[] appletArgs = new String[] { "ClassAndObjects" };
     if (passedArgs != null) {
       PApplet.main(concat(appletArgs, passedArgs));
     } else {

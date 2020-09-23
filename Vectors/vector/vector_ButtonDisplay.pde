@@ -24,8 +24,6 @@ class BDisplay{
 
 	//float posX, float posY, float minX, float maxX, float minY, float maxY
 	boolean Clicked(float clickPosX, float clickPosY){
-		
-
 		if(clickPosX < posX + sizeX && clickPosX > posX){
 			if(clickPosY < posY + sizeY && clickPosY > posY){
 				//print("clicked me " + head);

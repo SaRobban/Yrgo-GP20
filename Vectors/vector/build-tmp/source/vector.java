@@ -42,13 +42,14 @@ public void setup(){
 public void draw(){
 	//background(bg);
 	//cordSys.DrawXY();
-
 }	
+
 
 public void reDraw(){
 	background(bg);
 	cordSys.DrawXY();
 }	
+
 
 public void mousePressed() {
 	boolean lc = false;
@@ -63,6 +64,7 @@ public void mousePressed() {
 
 	reDraw();
 }
+
 
 public boolean Contains(float posX, float posY, float minX, float maxX, float minY, float maxY){
 	if(posX < maxX && posX > minX){
@@ -136,7 +138,6 @@ class BDisplay{
 	//float posX, float posY, float minX, float maxX, float minY, float maxY
 	public boolean Clicked(float clickPosX, float clickPosY){
 		
-
 		if(clickPosX < posX + sizeX && clickPosX > posX){
 			if(clickPosY < posY + sizeY && clickPosY > posY){
 				//print("clicked me " + head);

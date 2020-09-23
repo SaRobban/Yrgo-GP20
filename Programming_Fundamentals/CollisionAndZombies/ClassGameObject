@@ -1,0 +1,19 @@
+class Ball
+{
+    //Our class variables
+    PVector position; //Ball position
+
+    //Ball Constructor, called when we type new Ball(x, y);
+    Ball(float x, float y)
+    {
+        //Set our position when we create the code.
+        position = new PVector(x, y);
+
+    }
+
+
+    void draw()
+    {
+        ellipse(position.x, position.y, 50, 50);
+    }
+}
