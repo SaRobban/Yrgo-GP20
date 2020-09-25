@@ -1,3 +1,6 @@
+//Super class to BDisplay
+//Fills BDisplay with text and calculations
+
 class Direction extends BDisplay{
 	Arrow arrow;
 
@@ -20,8 +23,7 @@ class Direction extends BDisplay{
 	}
 
 
-	void draw(color boxBg){
-		super.draw(boxBg);
+	void drawArrows(color boxBg){
 		if(super.active)
 			arrow.drawArrow();
 	}
@@ -52,9 +54,8 @@ class DirectionNormalized extends BDisplay{
 		);
 	}
 
-
-	void draw(color boxBg){
-		super.draw(boxBg);
+	//this is split since vector arrows can overshoot grid
+	void drawArrows(color boxBg){
 		if(super.active)
 			arrow.drawArrow();
 	}
@@ -90,7 +91,7 @@ class SqrMagnitude extends BDisplay{
 				"Squared Magnitude","\nV1",                  
 				"\n                           V2         " + nf(fakeMagSq,3,2),
 				"Direction Direction",
-				"         *          = Squared Magnitude" + "\n" + 
+				"         ×          = Squared Magnitude" + "\n" + 
 				"   is closer to Origo then    ("+ nf(compSq,3,2) + "<" + "      )"
 			);
 		}else{
@@ -98,18 +99,17 @@ class SqrMagnitude extends BDisplay{
 				"Squared Magnitude","\nV1",                  
 				"\n                V2                    " + nf(fakeMagSq,3,2),
 				"Direction Direction",
-				"         *          = Squared Magnitude" + "\n" + 
+				"         ×          = Squared Magnitude" + "\n" + 
 				"   is closer to    then Origo ("+ nf(compSq,3,2) + ">" + "      )"
 			);
 		}
 	}
 
-
-	void draw(color boxBg){
-		super.draw(boxBg);
+	//this is split since vector arrows can overshoot grid
+	void drawArrows(color boxBg){
 		if(super.active){
-			this.line.drawLine();
 			this.lineB.drawLine();
+			this.line.drawLine();
 		}
 	}
 }
@@ -132,11 +132,10 @@ class Distance extends BDisplay{
 
 		this.arrow = new Arrow(realV1, target, cBase, lineThickness);
 
-
 		this.SetText(
 			"Distance","\n" + 
 				"V1", "\n" +
-				"               V2 = ",
+				"               V2",
 				"  SquaredMagnitude",
 				"√                   = Correct Distance" + "\n" + 
 				"   distance to    = " +  nf(fakeDist,0,2)
@@ -144,9 +143,66 @@ class Distance extends BDisplay{
 	}
 
 
-	void draw(color boxBg){
-		super.draw(boxBg);
+	void drawArrows(color boxBg){
 		if(super.active)
 			arrow.drawLine();
+	}
+}
+
+
+class Dot extends BDisplay{
+	Arrow arrow;
+
+	Dot(int posX, int posY, int sizeX, int sizeY, color colBase){
+		super(posX, posY, sizeX, sizeY, colBase);
+	}
+
+	void setCalculation(PVector v1, PVector v2, PVector realV1, PVector realV2){
+		
+		
+
+		PVector fakeDir = PVector.sub(v1, v2);
+		float fakeDot = PVector.dot(fakeDir, v1);
+		PVector fakedirtoO = v1.copy();
+		fakedirtoO.normalize();
+		fakedirtoO.mult(fakeDot);
+		fakedirtoO.add(realV1);
+		
+
+
+		float mydot = fakeDir.x * v1.x + fakeDir.y * v1.y;
+		println("dot: "+fakeDot + "  Mydot: " + mydot);
+		this.arrow = new Arrow(realV1, fakedirtoO, cBase, lineThickness);
+
+		//v1*v2  //v1.x * v2.x + v1.y * v2.y
+		if(fakeDot < 0){
+			this.SetText(
+				"Dot", 
+				"V1       V1.x       V1.y" + "\n" +
+				"V1                                V1", 
+				"\n                     V2",
+				"   dir        dir.x      dir.y",       
+				"  ∙    →(    ×     +    ×     )= Dot product" + "\n" + 
+				"   is faceing origo,    is behind    (" +  nf(fakeDot,0,2) + ")"
+			);
+		}else{
+			this.SetText(
+				"Dot", 
+				"V1       V1.x       V1.y" + "\n" +
+				"V1                   V1", 
+				"\n                                  V2",
+				"   dir        dir.x      dir.y",       
+				"  ∙    →(    ×     +    ×     )= Dot product" + "\n" + 
+				"   is faceing origo,    is behind    (" +  nf(fakeDot,0,2) + ")"
+			);
+		}
+	}
+
+
+	void drawArrows(color boxBg){
+		if(super.active){
+			//arrow.drawArrow();
+			arrow.drawArrow();
+		}
 	}
 }

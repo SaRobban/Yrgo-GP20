@@ -15,6 +15,8 @@ import java.io.IOException;
 public class vector extends PApplet {
 
 
+//Main Script
+
 XYaxlar cordSys;
 Point pointer;
 
@@ -51,7 +53,7 @@ public void draw(){
 
 public void reDraw(){
 	background(colbgA);
-	cordSys.DrawXY();
+	cordSys.draw();
 }	
 
 
@@ -64,12 +66,16 @@ public void mousePressed() {
 	if(mouseButton == RIGHT)
 		rc = true;
 
-	cordSys.Clicked(mouseX, mouseY, rc, lc);
+	cordSys.clicked(mouseX, mouseY, rc, lc);
 	reDraw();
 }
 
 
 //Special thx. Robin Bono, Daniel Nielsen, Jonatan Johansson, Simon Johansson
+//This class creates a line between two vectors.
+//The line can be drawn as a arrow 
+//Or a Messure line
+
 class Arrow{
 	PVector from;
 	PVector to;
@@ -79,7 +85,7 @@ class Arrow{
 	Arrow(PVector from, PVector to, int col, int thickness){
 		this.from = from;
 		this.to = to;
-		this.col = color(red(col), green(col), blue(col), 128);
+		this.col = color(red(col), green(col), blue(col), 255);
 		this.thickness = thickness;
 
 		//Shorten for grfx
@@ -114,7 +120,6 @@ class Arrow{
 		stroke(col);
 		
 		strokeWeight(thickness);	
-		line(from.x, from.y, to.x, to.y);
 
 		float rad = PI * 0.5f;
 
@@ -129,8 +134,13 @@ class Arrow{
 		dir = dir.rotate(rad * 2);
 		line(to.x, to.y, to.x + dir.x, to.y + dir.y);
 		line(from.x, from.y, from.x + dir.x, from.y + dir.y);
+
+		line(from.x + dir.x, from.y + dir.y, to.x + dir.x, to.y + dir.y);
 	}
 }
+//Button and display class
+//Draws buttons and text in rect boxes
+
 class BDisplay{
 	boolean active = false;
 
@@ -140,27 +150,27 @@ class BDisplay{
 	int sizeY;
 
 	int lineThickness = 3;
-
 	int cGreen;
 	int cRed;
 	int cOther;
 	int cBase;
+
 	String textHeader;
 	String textGreen;
 	String textRed;
-	String textOther;
 	String textInBox;
+	String textOther;
 	
 	BDisplay(){
-		this.posX = 0;
-		this.posY = 0;
-		this.sizeX = 0;
-		this.sizeY = 0;
-		this.textHeader = new String();
-		this.textGreen = new String();
-		this.textRed = new String();
-		this.textInBox = new String();
-		this.textOther = new String();
+		this.posX = 100;
+		this.posY = 100;
+		this.sizeX = 100;
+		this.sizeY = 100;
+		this.textHeader = new String("isEmpty");
+		this.textGreen = new String("isEmpty");
+		this.textRed = new String("isEmpty");
+		this.textInBox = new String("isEmpty");
+		this.textOther = new String("isEmpty");
 
 		this.cGreen = color(0,255,0,255);
 		this.cRed = color(255,0,0,255);
@@ -189,7 +199,6 @@ class BDisplay{
 
 	public void toggleActive(){
 		active = !active;
-		print("\n" + active);
 	}
 
 
@@ -242,6 +251,10 @@ class BDisplay{
 		noStroke();
 		rect(posX, posY, sizeX, sizeY);
 
+		if(active){
+			fill(cBase);
+			rect(posX + 3, posY + 2, lineThickness, sizeY -5);
+		}
 		//textSize(12);
 		//textFont(font, 12);
 
@@ -268,6 +281,7 @@ class BDisplay{
 		}
 	}
 }
+/*
 //This is the code for direction between two points
 public PVector getDirectionBetween(PVector v1, PVector v2){
 	return PVector.sub(v2, v1);
@@ -287,9 +301,7 @@ public float getSqrDistanceBetween(PVector v1, PVector v2){
 public float getDistanceBetween(PVector v1, PVector v2){
 	return PVector.dist(v1,v2);
 }
-
-
-
+*/
 class Point{
 	String name;
 	PVector cord;
@@ -303,36 +315,39 @@ class Point{
 		this.pos = new PVector(x,y);
 		this.radius = radius;
 		this.col = col;
-
-		
 		this.cordScale = scal;
-
 		this.cord = new PVector((x - off), (y - off));
-
 	}
+
 
 	public void setPosition(int x, int y, int off){
 		pos.set(x, y);
 		cord.set(x - off, y - off);
 	}
 
+
 	public PVector getPosition(){
 		return pos.copy();
 	}
+
 
 	public float getFakePosX(){
 		return cord.x / cordScale;
 	}
 
+
 	public float getFakePosY(){
 		return (cord.y / cordScale);
 	}
+
 
 	public void drawCord(){
 		textSize(12);
 		fill(col);
 		text(name + "\n" + "X" + (cord.x / cordScale) + "\nY" + (cord.y / cordScale), pos.x + radius * 2, pos.y + radius);
 	}
+
+
 	public void draw(){
 		fill(col);
 		noStroke();
@@ -340,6 +355,9 @@ class Point{
 		stroke(255);
 	}
 }
+//Super class to BDisplay
+//Fills BDisplay with text and calculations
+
 class Direction extends BDisplay{
 	Arrow arrow;
 
@@ -362,8 +380,7 @@ class Direction extends BDisplay{
 	}
 
 
-	public void draw(int boxBg){
-		super.draw(boxBg);
+	public void drawArrows(int boxBg){
 		if(super.active)
 			arrow.drawArrow();
 	}
@@ -394,9 +411,8 @@ class DirectionNormalized extends BDisplay{
 		);
 	}
 
-
-	public void draw(int boxBg){
-		super.draw(boxBg);
+	//this is split since vector arrows can overshoot grid
+	public void drawArrows(int boxBg){
 		if(super.active)
 			arrow.drawArrow();
 	}
@@ -432,7 +448,7 @@ class SqrMagnitude extends BDisplay{
 				"Squared Magnitude","\nV1",                  
 				"\n                           V2         " + nf(fakeMagSq,3,2),
 				"Direction Direction",
-				"         *          = Squared Magnitude" + "\n" + 
+				"         ×          = Squared Magnitude" + "\n" + 
 				"   is closer to Origo then    ("+ nf(compSq,3,2) + "<" + "      )"
 			);
 		}else{
@@ -440,18 +456,17 @@ class SqrMagnitude extends BDisplay{
 				"Squared Magnitude","\nV1",                  
 				"\n                V2                    " + nf(fakeMagSq,3,2),
 				"Direction Direction",
-				"         *          = Squared Magnitude" + "\n" + 
+				"         ×          = Squared Magnitude" + "\n" + 
 				"   is closer to    then Origo ("+ nf(compSq,3,2) + ">" + "      )"
 			);
 		}
 	}
 
-
-	public void draw(int boxBg){
-		super.draw(boxBg);
+	//this is split since vector arrows can overshoot grid
+	public void drawArrows(int boxBg){
 		if(super.active){
-			this.line.drawLine();
 			this.lineB.drawLine();
+			this.line.drawLine();
 		}
 	}
 }
@@ -474,11 +489,10 @@ class Distance extends BDisplay{
 
 		this.arrow = new Arrow(realV1, target, cBase, lineThickness);
 
-
 		this.SetText(
 			"Distance","\n" + 
 				"V1", "\n" +
-				"               V2 = ",
+				"               V2",
 				"  SquaredMagnitude",
 				"√                   = Correct Distance" + "\n" + 
 				"   distance to    = " +  nf(fakeDist,0,2)
@@ -486,13 +500,72 @@ class Distance extends BDisplay{
 	}
 
 
-	public void draw(int boxBg){
-		super.draw(boxBg);
+	public void drawArrows(int boxBg){
 		if(super.active)
 			arrow.drawLine();
 	}
 }
-//Class cordinatSystem
+
+
+class Dot extends BDisplay{
+	Arrow arrow;
+
+	Dot(int posX, int posY, int sizeX, int sizeY, int colBase){
+		super(posX, posY, sizeX, sizeY, colBase);
+	}
+
+	public void setCalculation(PVector v1, PVector v2, PVector realV1, PVector realV2){
+		
+		
+
+		PVector fakeDir = PVector.sub(v1, v2);
+		float fakeDot = PVector.dot(fakeDir, v1);
+		PVector fakedirtoO = v1.copy();
+		fakedirtoO.normalize();
+		fakedirtoO.mult(fakeDot);
+		fakedirtoO.add(realV1);
+		
+
+
+		float mydot = fakeDir.x * v1.x + fakeDir.y * v1.y;
+		println("dot: "+fakeDot + "  Mydot: " + mydot);
+		this.arrow = new Arrow(realV1, fakedirtoO, cBase, lineThickness);
+
+		//v1*v2  //v1.x * v2.x + v1.y * v2.y
+		if(fakeDot < 0){
+			this.SetText(
+				"Dot", 
+				"V1       V1.x       V1.y" + "\n" +
+				"V1                                V1", 
+				"\n                     V2",
+				"   dir        dir.x      dir.y",       
+				"  ∙    →(    ×     +    ×     )= Dot product" + "\n" + 
+				"   is faceing origo,    is behind    (" +  nf(fakeDot,0,2) + ")"
+			);
+		}else{
+			this.SetText(
+				"Dot", 
+				"V1       V1.x       V1.y" + "\n" +
+				"V1                   V1", 
+				"\n                                  V2",
+				"   dir        dir.x      dir.y",       
+				"  ∙    →(    ×     +    ×     )= Dot product" + "\n" + 
+				"   is faceing origo,    is behind    (" +  nf(fakeDot,0,2) + ")"
+			);
+		}
+	}
+
+
+	public void drawArrows(int boxBg){
+		if(super.active){
+			//arrow.drawArrow();
+			arrow.drawArrow();
+		}
+	}
+}
+//Class cordinatSystem (meat of the program)
+//Draws and calculate all vectors and its sub classes.
+
 class XYaxlar{
 	PVector origo;
 	PVector xAxis;
@@ -509,14 +582,17 @@ class XYaxlar{
 	int colArrow;
 	int arrowThickness;
 
+
+	//Declare new functions here
 	Direction direction;
 	DirectionNormalized directionNormal;
 	SqrMagnitude sqrMagnitude;
 	Distance distance;
-	BDisplay dotProduct;
+	Dot dotProduct;
 
-	//scalar
+	BDisplay[] dirsplayBoxes;
 	//angle
+	//closest point on line
 
 	//Constructor
 	XYaxlar(int origoX, int origoY, int endX, int endY, int scal, int cBgA, int cBgB){
@@ -530,21 +606,35 @@ class XYaxlar{
 		this.colArrow = color(255, 255, 0, 255);
 		this.arrowThickness = 3;
 
-		this.direction = new Direction(origoX, endY + 20, 140, 40, color(255, 128, 0));
-		this.directionNormal = new DirectionNormalized(origoX + 160, endY + 20, 180, 40, color(255, 255, 0));
-		this.sqrMagnitude = new SqrMagnitude(origoX, endY + 80, 340, 40, color(255, 64, 0), origo.copy());
-		this.distance = new Distance(origoX, endY + 140, 340, 40, color(255, 32, 0));
+		this.direction = new Direction(						origoX,			endY + 20, 	140, 40, color(255, 255, 0));
+		this.directionNormal = new DirectionNormalized(		origoX + 160, 	endY + 20, 	180, 40, color(255, 192, 0));
+		this.sqrMagnitude = new SqrMagnitude(				origoX, 		endY + 80, 	340, 40, color(255, 128, 0), origo.copy());
+		this.distance = new Distance(						origoX, 		endY + 140, 340, 40, color(255, 64, 0));
+		this.dotProduct = new Dot(							origoX, 		endY + 200, 340, 40, color(192, 0,64));
+
+		this.dirsplayBoxes = new BDisplay[5];
+		this.dirsplayBoxes[0] = this.direction;
+		this.dirsplayBoxes[1] = this.directionNormal;
+		this.dirsplayBoxes[2] = this.sqrMagnitude;
+		this.dirsplayBoxes[3] = this.distance;
+		this.dirsplayBoxes[4] = this.dotProduct;
+
+		
+
+
+
+
 	}
 
-	public int GetSizeX(){
+	public int getSizeX(){
 		return (int)xAxis.x;
 	}
 
-	public int GetSizeY(){
+	public int getSizeY(){
 		return (int)yAxis.y;
 	}
 
-	public void DrawXY(){
+	public void draw(){
 
 		//DrawGrid BG
 		stroke(cBgB);
@@ -555,10 +645,15 @@ class XYaxlar{
 		}
 
 		//Draw Boxes and functions
-		directionNormal.draw(cBgB);
-		direction.draw(cBgB);
-		distance.draw(cBgB);
-		sqrMagnitude.draw(cBgB);
+		direction.drawArrows(cBgB);
+		directionNormal.drawArrows(cBgB);
+		sqrMagnitude.drawArrows(cBgB);
+		distance.drawArrows(cBgB);
+		dotProduct.drawArrows(cBgB);
+
+		for(int i = 0; i < dirsplayBoxes.length; i++){
+			dirsplayBoxes[i].draw(cBgB);
+		}
 
 		//InfoText
 		fill(255);
@@ -579,18 +674,24 @@ class XYaxlar{
 
 	
 
-	public void Clicked(float x, float y, boolean rc, boolean lc){
+	public void clicked(float x, float y, boolean rc, boolean lc){
 		//Clicked functions
 		if(pOne != null && pTwo != null){
+			for(int i = 0; i < dirsplayBoxes.length; i++){
+				dirsplayBoxes[i].clicked(x,y);
+			}
+			/*
 			direction.clicked(x, y);
 			directionNormal.clicked(x,y);
 			sqrMagnitude.clicked(x,y);
 			distance.clicked(x,y);
+			dotProduct.clicked(x,y);
+			*/             ///+-------------------Check if loop is ok
 		}
 
 
 		//Clicked vectorfield
-		if(Contains(x, y, origo.x, xAxis.x, origo.y, yAxis.y)){
+		if(contains(x, y, origo.x, xAxis.x, origo.y, yAxis.y)){
 			int posX = round(x * 0.1f);
 			int posY = round(y * 0.1f);
 			posX *= 10;
@@ -610,11 +711,11 @@ class XYaxlar{
 				pTwo.setPosition(posX, posY, offset);
 			}
 		}
-		Calculate();
+		calculate();
 	}
 
 
-	public void Calculate(){
+	public void calculate(){
 		if(pOne != null && pTwo != null){
 
 			PVector vectOne = new PVector(pOne.getFakePosX(), pOne.getFakePosY());
@@ -631,10 +732,14 @@ class XYaxlar{
 
 			distance.setColorOther(sqrMagnitude.getColorBase());
 			distance.setCalculation(vectOne, vectTwo, pOne.getPosition(), pTwo.getPosition());
+
+			dotProduct.setColorOther(direction.getColorBase());
+			dotProduct.setCalculation(vectOne,vectTwo, pOne.getPosition(), pTwo.getPosition());
+
 		}
 	}
 
-	public boolean Contains(float posX, float posY, float minX, float maxX, float minY, float maxY){
+	public boolean contains(float posX, float posY, float minX, float maxX, float minY, float maxY){
 		if(posX < maxX && posX > minX){
 			if(posY < maxY && posY > minY)
 				return true;
@@ -642,7 +747,7 @@ class XYaxlar{
 		return false;
 	}
 }
-  public void settings() { 	size(512,512); }
+  public void settings() { 	size(512,650); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "vector" };
     if (passedArgs != null) {

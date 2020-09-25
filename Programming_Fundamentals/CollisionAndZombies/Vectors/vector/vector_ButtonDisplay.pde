@@ -1,3 +1,6 @@
+//Button and display class
+//Draws buttons and text in rect boxes
+
 class BDisplay{
 	boolean active = false;
 
@@ -7,27 +10,27 @@ class BDisplay{
 	int sizeY;
 
 	int lineThickness = 3;
-
 	color cGreen;
 	color cRed;
 	color cOther;
 	color cBase;
+
 	String textHeader;
 	String textGreen;
 	String textRed;
-	String textOther;
 	String textInBox;
+	String textOther;
 	
 	BDisplay(){
-		this.posX = 0;
-		this.posY = 0;
-		this.sizeX = 0;
-		this.sizeY = 0;
-		this.textHeader = new String();
-		this.textGreen = new String();
-		this.textRed = new String();
-		this.textInBox = new String();
-		this.textOther = new String();
+		this.posX = 100;
+		this.posY = 100;
+		this.sizeX = 100;
+		this.sizeY = 100;
+		this.textHeader = new String("isEmpty");
+		this.textGreen = new String("isEmpty");
+		this.textRed = new String("isEmpty");
+		this.textInBox = new String("isEmpty");
+		this.textOther = new String("isEmpty");
 
 		this.cGreen = color(0,255,0,255);
 		this.cRed = color(255,0,0,255);
@@ -56,7 +59,6 @@ class BDisplay{
 
 	public void toggleActive(){
 		active = !active;
-		print("\n" + active);
 	}
 
 
@@ -109,6 +111,10 @@ class BDisplay{
 		noStroke();
 		rect(posX, posY, sizeX, sizeY);
 
+		if(active){
+			fill(cBase);
+			rect(posX + 3, posY + 2, lineThickness, sizeY -5);
+		}
 		//textSize(12);
 		//textFont(font, 12);
 

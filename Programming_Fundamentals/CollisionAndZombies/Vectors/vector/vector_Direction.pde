@@ -1,3 +1,4 @@
+/*
 //This is the code for direction between two points
 public PVector getDirectionBetween(PVector v1, PVector v2){
 	return PVector.sub(v2, v1);
@@ -17,3 +18,4 @@ public float getSqrDistanceBetween(PVector v1, PVector v2){
 public float getDistanceBetween(PVector v1, PVector v2){
 	return PVector.dist(v1,v2);
 }
+*/

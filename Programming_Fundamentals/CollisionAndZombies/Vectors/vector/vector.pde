@@ -1,4 +1,6 @@
 
+//Main Script
+
 XYaxlar cordSys;
 Point pointer;
 
@@ -23,7 +25,7 @@ void setup(){
 	textFont(font, 12);
 
 	//noLoop();
-	size(512,512);
+	size(512,650);
 	cordSys = new XYaxlar(offset, offset, 360, 320, cordScale, colbgA, colbgB);
 	reDraw();
 }
@@ -35,7 +37,7 @@ void draw(){
 
 void reDraw(){
 	background(colbgA);
-	cordSys.DrawXY();
+	cordSys.draw();
 }	
 
 
@@ -48,7 +50,7 @@ void mousePressed() {
 	if(mouseButton == RIGHT)
 		rc = true;
 
-	cordSys.Clicked(mouseX, mouseY, rc, lc);
+	cordSys.clicked(mouseX, mouseY, rc, lc);
 	reDraw();
 }
 

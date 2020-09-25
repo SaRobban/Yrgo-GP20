@@ -1,3 +1,7 @@
+//This class creates a line between two vectors.
+//The line can be drawn as a arrow 
+//Or a Messure line
+
 class Arrow{
 	PVector from;
 	PVector to;
@@ -7,7 +11,7 @@ class Arrow{
 	Arrow(PVector from, PVector to, color col, int thickness){
 		this.from = from;
 		this.to = to;
-		this.col = color(red(col), green(col), blue(col), 128);
+		this.col = color(red(col), green(col), blue(col), 255);
 		this.thickness = thickness;
 
 		//Shorten for grfx
@@ -42,7 +46,6 @@ class Arrow{
 		stroke(col);
 		
 		strokeWeight(thickness);	
-		line(from.x, from.y, to.x, to.y);
 
 		float rad = PI * 0.5;
 
@@ -57,5 +60,7 @@ class Arrow{
 		dir = dir.rotate(rad * 2);
 		line(to.x, to.y, to.x + dir.x, to.y + dir.y);
 		line(from.x, from.y, from.x + dir.x, from.y + dir.y);
+
+		line(from.x + dir.x, from.y + dir.y, to.x + dir.x, to.y + dir.y);
 	}
 }
