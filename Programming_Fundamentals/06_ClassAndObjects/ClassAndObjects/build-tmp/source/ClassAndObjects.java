@@ -353,20 +353,18 @@ public void SaveHiScore(int score) {
 
 
 public int LoadHiScore() {
-  //File file = new File(dataPath("hiscore.json"));
+  File file = new File(dataPath("hiscore.json"));
 
-  //if (file.exists()){
+  if (file.exists()){
     println("file exist");
     json = loadJSONObject("data/hiscore.json");
     int oldScore = json.getInt("Highscore");
-    return oldScore;
-  /*  
+    return oldScore;    
   }else{
     println("Try to create new file");
     CreateNewFile();
     return score;
   }
-  */
 }
 
 //scala cordinater
