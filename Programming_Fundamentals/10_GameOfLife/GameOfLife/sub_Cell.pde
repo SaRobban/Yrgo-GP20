@@ -1,6 +1,7 @@
 //Singel cell
 class Cell{
-	int numberOfNeighbors = 0;
+	int numberOfAliveNeighbors = 0;
+	int[] indexOfNeighbors;
 	boolean isAlive = false;
 	boolean wasAlive = false;
 	int posX;
@@ -10,157 +11,63 @@ class Cell{
 	int colHue = 0;
 	int colBright = 0;
 
-	Cell(int posX, int posY, boolean alive){
+	Cell(int posX, int posY, boolean alive, int[] indexOfNeighbors){
 		this.posX = posX;
 		this.posY = posY;
 		this.isAlive = alive;
+		this.indexOfNeighbors = indexOfNeighbors;
 	}
 
 	boolean checkIfAlive(){
 		return isAlive;
 	}
 
-	boolean expandSpaceX(int compX){
-		if(isAlive)
-			if(posX == compX)
-				return true;
-
-		return false;
-	}
-
-	boolean expandSpaceY(int compY){
-		if(isAlive)
-			if(posY == compY)
-				return true;
-
-		return false;
-	}
-
-	void update(Cell[][] cellGrid){
-		setPopulationState();
-		checkNumberOfNeighbors(cellGrid);
-	}
-
-	void checkNumberOfNeighbors(Cell[][] cellGrid){
-		numberOfNeighbors = 0;
-		//Explanation of Intent:
-		//I do this matrix instead of loop to prevent extra checkup (if cell is self)
-		//XXX
-		//X X
-		//XXX
-		if(cellGrid[posX -1][posY +1].isAlive)
-			numberOfNeighbors++;
-
-		if(cellGrid[posX]	[posY +1].isAlive)
-			numberOfNeighbors++;
-		
-		if(cellGrid[posX +1][posY +1].isAlive)
-			numberOfNeighbors++;
-		
-		if(cellGrid[posX -1][posY].isAlive)
-			numberOfNeighbors++;
-		
-		if(cellGrid[posX +1][posY].isAlive)
-			numberOfNeighbors++;
-		
-		if(cellGrid[posX -1][posY -1].isAlive)
-			numberOfNeighbors++;
-		
-		if(cellGrid[posX]	[posY -1].isAlive)
-			numberOfNeighbors++;
-
-		if(cellGrid[posX +1][posY -1].isAlive)
-			numberOfNeighbors++;
+	void checkNumberOfAliveNeighbors(Cell[][] cellGrid){
+		numberOfAliveNeighbors = 0;
+		for(int x = 0; x < indexOfNeighbors.length; x+=2){
+			if(cellGrid[indexOfNeighbors[x]][indexOfNeighbors[x+1]].isAlive)
+				numberOfAliveNeighbors++;
+		}
 	}
 
 	void setPopulationState(){
+
+		//TODO: check if speed up is posseble
 		//Any live cell with fewer than two live neighbors dies, as if caused by underpopulation.
 		//Any live cell with two or three live neighbors lives on to the next generation.
 		//Any live cell with more than three live neighbors dies, as if by overpopulation.
 		//Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
 		if(isAlive){
-			if(numberOfNeighbors < 2){
+			if(numberOfAliveNeighbors < 2){
 				isAlive = false;
-			}else if(numberOfNeighbors < 4){
+				return;
+			}else if(numberOfAliveNeighbors < 4){
 				isAlive = true;
+				return;
 			}else{ 
 				isAlive = false;
+				return;
 			}
 		}else{
-			if(numberOfNeighbors == 3){
+			if(numberOfAliveNeighbors == 3){
 				isAlive = true;
+				return;
 			}
 		}
 	}
 
-	void draw(int cSize, Cell[][] cellGrid){
+	void draw(int cSize){
 		if(isAlive){
-			age++;
-			if(wasAlive != isAlive){
-				colHue = 2;
-				colBright = 50;
-				wasAlive = isAlive;
-			}
-			colorNeighbors(cellGrid);
-		}else{
-			if(wasAlive != isAlive){
-				colHue = 0;
-				colBright = 25;
-				wasAlive = isAlive;
-			}
-			if(colBright > 25)
-				colBright = 25;
-			colBright--;
+			rect(posX * cSize, posY * cSize, cSize, cSize);
 		}
-		fill(color(colHue,50,colBright,255));
-		rect(posX * cSize, posY * cSize, cSize, cSize);
 	}
 
-
-
-
-
-	void colorNeighbors(Cell[][] cellGrid){
-		numberOfNeighbors = 0;
-		//Explanation of Intent:
-		//I do this matrix instead of loop to prevent extra checkup (if cell is self)
-		//XXX
-		//X X
-		//XXX
-
-		if(!cellGrid[posX -1][posY +1].isAlive){
-			cellGrid[posX -1][posY +1].colHue = colHue;
-			cellGrid[posX -1][posY +1].colBright++; 
-		}
-		if(!cellGrid[posX][posY +1].isAlive){
-			cellGrid[posX][posY +1].colHue = colHue;
-			cellGrid[posX][posY +1].colBright++; 
-		}
-		if(!cellGrid[posX +1][posY +1].isAlive){
-			cellGrid[posX +1][posY +1].colHue = colHue;
-			cellGrid[posX +1][posY +1].colBright++; 
-		}
-
-		if(!cellGrid[posX -1][posY].isAlive){
-			cellGrid[posX -1][posY].colHue = colHue;
-			cellGrid[posX -1][posY].colBright++; 
-		}
-		if(!cellGrid[posX +1][posY].isAlive){
-			cellGrid[posX +1][posY].colHue = colHue;
-			cellGrid[posX +1][posY].colBright++; 
-		}
-
-		if(!cellGrid[posX -1][posY -1].isAlive){
-			cellGrid[posX -1][posY -1].colHue = colHue;
-			cellGrid[posX -1][posY -1].colBright++; 
-		}
-		if(!cellGrid[posX][posY -1].isAlive){
-			cellGrid[posX][posY -1].colHue = colHue;
-			cellGrid[posX][posY -1].colBright++; 
-		}
-		if(!cellGrid[posX +1][posY -1].isAlive){
-			cellGrid[posX +1][posY -1].colHue = colHue;
-			cellGrid[posX +1][posY -1].colBright++; 
+	void drawFX(int cSize, int largeSize){
+		if(isAlive){
+			//fill(color(0,128,64,255));
+			rect(posX * cSize - cSize, posY * cSize - cSize, largeSize, largeSize);
+			//fill(color(0,255,128,255));
+			rect(posX * cSize, posY * cSize, cSize, cSize);
 		}
 	}
 }

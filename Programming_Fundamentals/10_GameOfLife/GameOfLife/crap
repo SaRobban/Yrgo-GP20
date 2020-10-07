@@ -53,3 +53,89 @@
 		return true;
 	}
 */
+
+/*
+	boolean expandSpaceX(int compX){
+		if(isAlive)
+			if(posX == compX)
+				return true;
+
+		return false;
+	}
+
+	boolean expandSpaceY(int compY){
+		if(isAlive)
+			if(posY == compY)
+				return true;
+
+		return false;
+	}
+	*/
+
+	/*
+	//age++;
+			if(wasAlive != isAlive){
+				colHue = 2;
+				colBright = 50;
+				wasAlive = isAlive;
+			}
+			colorNeighbors(cellGrid);
+		}else{
+			if(wasAlive != isAlive){
+				colHue = 0;
+				colBright = 25;
+				wasAlive = isAlive;
+			}
+			if(colBright > 25)
+				colBright = 25;
+			colBright--;
+		}
+		fill(color(colHue,50,colBright,255));
+		*/
+
+		/*
+
+	void colorNeighbors(Cell[][] cellGrid){
+		numberOfAliveNeighbors = 0;
+		//Explanation of Intent:
+		//I do this matrix instead of loop to prevent extra checkup (if cell is self)
+		//XXX
+		//X X
+		//XXX
+
+		if(!cellGrid[posX -1][posY +1].isAlive){
+			cellGrid[posX -1][posY +1].colHue = colHue;
+			cellGrid[posX -1][posY +1].colBright++; 
+		}
+		if(!cellGrid[posX][posY +1].isAlive){
+			cellGrid[posX][posY +1].colHue = colHue;
+			cellGrid[posX][posY +1].colBright++; 
+		}
+		if(!cellGrid[posX +1][posY +1].isAlive){
+			cellGrid[posX +1][posY +1].colHue = colHue;
+			cellGrid[posX +1][posY +1].colBright++; 
+		}
+
+		if(!cellGrid[posX -1][posY].isAlive){
+			cellGrid[posX -1][posY].colHue = colHue;
+			cellGrid[posX -1][posY].colBright++; 
+		}
+		if(!cellGrid[posX +1][posY].isAlive){
+			cellGrid[posX +1][posY].colHue = colHue;
+			cellGrid[posX +1][posY].colBright++; 
+		}
+
+		if(!cellGrid[posX -1][posY -1].isAlive){
+			cellGrid[posX -1][posY -1].colHue = colHue;
+			cellGrid[posX -1][posY -1].colBright++; 
+		}
+		if(!cellGrid[posX][posY -1].isAlive){
+			cellGrid[posX][posY -1].colHue = colHue;
+			cellGrid[posX][posY -1].colBright++; 
+		}
+		if(!cellGrid[posX +1][posY -1].isAlive){
+			cellGrid[posX +1][posY -1].colHue = colHue;
+			cellGrid[posX +1][posY -1].colBright++; 
+		}
+	}
+	*/
