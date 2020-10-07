@@ -40,30 +40,16 @@ void keyPressed() {
 		rainbow++;
 		rainbow = rainbow % 50;
 	}
-
-	if (key == CODED) {
-		if (keyCode == UP) {
-			frameRateSpeed++;
-		} else if (keyCode == DOWN) {
-			frameRateSpeed--;
-		} 
-  }
-  if(frameRateSpeed < 0){
-  	frameRateSpeed = 1;
-  	print("framerate" + frameRateSpeed);
-  }
 }
 
 void cellGenerationStep(){
-	//frameRate(frameRateSpeed);
-	
 	cellManager.draw();
 }
 
 void drawText(){
-	textSize(32);
+	textSize(12);
 	textAlign(RIGHT, TOP);
 	text("word", 10, 30); 
-	fill(50,50,50);
+	fill(0,0,50);
 	text("press S to step generation forward \n" + "press R to restet", width -10, 10);
 }

@@ -56,31 +56,17 @@ public void keyPressed() {
 		rainbow++;
 		rainbow = rainbow % 50;
 	}
-
-	if (key == CODED) {
-		if (keyCode == UP) {
-			frameRateSpeed++;
-		} else if (keyCode == DOWN) {
-			frameRateSpeed--;
-		} 
-  }
-  if(frameRateSpeed < 0){
-  	frameRateSpeed = 1;
-  	print("framerate" + frameRateSpeed);
-  }
 }
 
 public void cellGenerationStep(){
-	//frameRate(frameRateSpeed);
-	
 	cellManager.draw();
 }
 
 public void drawText(){
-	textSize(32);
+	textSize(12);
 	textAlign(RIGHT, TOP);
 	text("word", 10, 30); 
-	fill(50,50,50);
+	fill(0,0,50);
 	text("press S to step generation forward \n" + "press R to restet", width -10, 10);
 }
 //Singel cell
@@ -101,14 +87,9 @@ class Cell{
 		this.isAlive = alive;
 	}
 
-	public void update(Cell[][] cellGrid){
-		setPopulationState();
-		checkNumberOfNeighbors(cellGrid);
-	}
-
 	public boolean checkIfAlive(){
 		return isAlive;
-	} 
+	}
 
 	public boolean expandSpaceX(int compX){
 		if(isAlive)
@@ -125,6 +106,13 @@ class Cell{
 
 		return false;
 	}
+
+	public void update(Cell[][] cellGrid){
+		setPopulationState();
+		checkNumberOfNeighbors(cellGrid);
+	}
+
+
 
 	public void checkNumberOfNeighbors(Cell[][] cellGrid){
 		numberOfNeighbors = 0;
@@ -176,6 +164,13 @@ class Cell{
 				isAlive = true;
 			}
 		}
+
+		if(isAlive){
+			colBright = 50;
+			
+		}else{
+			colBright--;
+		}
 	}
 
 	public void draw(int cSize, Cell[][] cellGrid){
@@ -186,14 +181,14 @@ class Cell{
 				wasAlive = isAlive;
 				colorNeighbors(cellGrid);
 			}
-			colBright = 50;
-			fill(color(colHue,255,colBright,255));
 			
+			fill(color(2,50,colBright,255));
+			colorNeighbors(cellGrid);
 		}else{
 			//colHue --;
 			//colHue = colHue % 50;
-			colBright--;
-			fill(colHue,255,colBright,255);
+			//colBright--;
+			fill(0,50,colBright,255);
 		}
 		rect(posX * cSize, posY * cSize, cSize, cSize);
 	}
@@ -266,7 +261,7 @@ class CellManager{
 	public void reset(){
 		for(int x = 0; x < lengthX; x++){
 			for(int y = 0; y < lengthY; y++){
-				if(x > 60 && x < 100 && y > 60 && y < 100){
+				if(x > 1 && x < lengthX-1 && y > 1 && y < lengthY-1){
 					if((int)random(5) == 0){
 						cells[x][y] = new Cell(x,y,true);
 					}else{
@@ -280,12 +275,13 @@ class CellManager{
 	}
 
 	public void update(){
+		/*
 		if(cellshasSpace()){
 			itt++;
 		}else{
 			print("MAXSPACE REACHED. ENDED SIM AT: " + itt);
 		}
-
+*/
 		if(oneLoopUpdate){
 			cellUpdate();
 		}else{
@@ -302,14 +298,6 @@ class CellManager{
 		}
 	}
 
-	public void setCellPopulation(){
-		for(int x = 1; x < lengthX -1; x++){
-			for(int y = 1; y < lengthY -1; y++){
-				cells[x][y].setPopulationState();
-			}
-		}
-	}
-
 	public void checkCellNeighbors(){
 		for(int x = 1; x < lengthX -1; x++){
 			for(int y = 1; y < lengthY -1; y++){
@@ -318,7 +306,15 @@ class CellManager{
 		}
 	}
 
-	public boolean cellshasSpace(){
+	public void setCellPopulation(){
+		for(int x = 1; x < lengthX -1; x++){
+			for(int y = 1; y < lengthY -1; y++){
+				cells[x][y].setPopulationState();
+			}
+		}
+	}
+/*
+	boolean cellshasSpace(){
 		//TODO: expand cellArray if no space
 		boolean isSpace = false;
 		if(hasSpaceUp() && hasSpaceDown() && hasSpaceLeft() && hasSpaceRight()){
@@ -327,7 +323,7 @@ class CellManager{
 		return isSpace;
 	}
 
-	public boolean hasSpaceLeft(){
+	boolean hasSpaceLeft(){
 		for(int y = 0; y < lengthY; y++){
 			if(cells[0][y].isAlive){
 				return false;
@@ -336,7 +332,7 @@ class CellManager{
 		return true;
 	}
 
-	public boolean hasSpaceRight(){
+	boolean hasSpaceRight(){
 		for(int y = 0; y < lengthY; y++){
 			if(cells[lengthX-1][y].isAlive){
 				return false;
@@ -345,7 +341,7 @@ class CellManager{
 		return true;
 	}
 
-	public boolean hasSpaceUp(){
+	boolean hasSpaceUp(){
 		for(int x = 0; x < lengthY; x++){
 			if(cells[x][0].isAlive){
 				return false;
@@ -354,7 +350,7 @@ class CellManager{
 		return true;
 	}
 
-	public boolean hasSpaceDown(){
+	boolean hasSpaceDown(){
 		for(int x = 0; x < lengthX; x++){
 			if(cells[x][lengthY-1].isAlive){
 				return false;
@@ -362,7 +358,7 @@ class CellManager{
 		}
 		return true;
 	}
-
+*/
 	public void draw(){
 		for(int x = 0; x < lengthX; x++){
 			for(int y = 0; y < lengthY; y++){
@@ -370,6 +366,7 @@ class CellManager{
 			}
 		}
 	}
+
 }
   public void settings() { 	size(800,800); }
   static public void main(String[] passedArgs) {

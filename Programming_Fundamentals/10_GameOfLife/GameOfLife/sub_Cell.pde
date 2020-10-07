@@ -16,14 +16,9 @@ class Cell{
 		this.isAlive = alive;
 	}
 
-	void update(Cell[][] cellGrid){
-		setPopulationState();
-		checkNumberOfNeighbors(cellGrid);
-	}
-
 	boolean checkIfAlive(){
 		return isAlive;
-	} 
+	}
 
 	boolean expandSpaceX(int compX){
 		if(isAlive)
@@ -40,6 +35,13 @@ class Cell{
 
 		return false;
 	}
+
+	void update(Cell[][] cellGrid){
+		setPopulationState();
+		checkNumberOfNeighbors(cellGrid);
+	}
+
+
 
 	void checkNumberOfNeighbors(Cell[][] cellGrid){
 		numberOfNeighbors = 0;
@@ -91,6 +93,13 @@ class Cell{
 				isAlive = true;
 			}
 		}
+
+		if(isAlive){
+			colBright = 50;
+			
+		}else{
+			colBright--;
+		}
 	}
 
 	void draw(int cSize, Cell[][] cellGrid){
@@ -101,14 +110,14 @@ class Cell{
 				wasAlive = isAlive;
 				colorNeighbors(cellGrid);
 			}
-			colBright = 50;
-			fill(color(colHue,255,colBright,255));
 			
+			fill(color(2,50,colBright,255));
+			colorNeighbors(cellGrid);
 		}else{
 			//colHue --;
 			//colHue = colHue % 50;
-			colBright--;
-			fill(colHue,255,colBright,255);
+			//colBright--;
+			fill(0,50,colBright,255);
 		}
 		rect(posX * cSize, posY * cSize, cSize, cSize);
 	}
