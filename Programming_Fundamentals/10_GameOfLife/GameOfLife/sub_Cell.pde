@@ -41,8 +41,6 @@ class Cell{
 		checkNumberOfNeighbors(cellGrid);
 	}
 
-
-
 	void checkNumberOfNeighbors(Cell[][] cellGrid){
 		numberOfNeighbors = 0;
 		//Explanation of Intent:
@@ -93,34 +91,33 @@ class Cell{
 				isAlive = true;
 			}
 		}
-
-		if(isAlive){
-			colBright = 50;
-			
-		}else{
-			colBright--;
-		}
 	}
 
 	void draw(int cSize, Cell[][] cellGrid){
 		if(isAlive){
 			age++;
 			if(wasAlive != isAlive){
-				colHue = rainbow;
+				colHue = 2;
+				colBright = 50;
 				wasAlive = isAlive;
-				colorNeighbors(cellGrid);
 			}
-			
-			fill(color(2,50,colBright,255));
 			colorNeighbors(cellGrid);
 		}else{
-			//colHue --;
-			//colHue = colHue % 50;
-			//colBright--;
-			fill(0,50,colBright,255);
+			if(wasAlive != isAlive){
+				colHue = 0;
+				colBright = 25;
+				wasAlive = isAlive;
+			}
+			if(colBright > 25)
+				colBright = 25;
+			colBright--;
 		}
+		fill(color(colHue,50,colBright,255));
 		rect(posX * cSize, posY * cSize, cSize, cSize);
 	}
+
+
+
 
 
 	void colorNeighbors(Cell[][] cellGrid){
@@ -133,37 +130,37 @@ class Cell{
 
 		if(!cellGrid[posX -1][posY +1].isAlive){
 			cellGrid[posX -1][posY +1].colHue = colHue;
-			cellGrid[posX -1][posY +1].colBright = 25; 
+			cellGrid[posX -1][posY +1].colBright++; 
 		}
 		if(!cellGrid[posX][posY +1].isAlive){
 			cellGrid[posX][posY +1].colHue = colHue;
-			cellGrid[posX][posY +1].colBright = 25; 
+			cellGrid[posX][posY +1].colBright++; 
 		}
 		if(!cellGrid[posX +1][posY +1].isAlive){
 			cellGrid[posX +1][posY +1].colHue = colHue;
-			cellGrid[posX +1][posY +1].colBright = 25; 
+			cellGrid[posX +1][posY +1].colBright++; 
 		}
 
 		if(!cellGrid[posX -1][posY].isAlive){
 			cellGrid[posX -1][posY].colHue = colHue;
-			cellGrid[posX -1][posY].colBright = 25; 
+			cellGrid[posX -1][posY].colBright++; 
 		}
 		if(!cellGrid[posX +1][posY].isAlive){
 			cellGrid[posX +1][posY].colHue = colHue;
-			cellGrid[posX +1][posY].colBright = 25; 
+			cellGrid[posX +1][posY].colBright++; 
 		}
 
 		if(!cellGrid[posX -1][posY -1].isAlive){
 			cellGrid[posX -1][posY -1].colHue = colHue;
-			cellGrid[posX -1][posY -1].colBright = 25; 
+			cellGrid[posX -1][posY -1].colBright++; 
 		}
 		if(!cellGrid[posX][posY -1].isAlive){
 			cellGrid[posX][posY -1].colHue = colHue;
-			cellGrid[posX][posY -1].colBright = 25; 
+			cellGrid[posX][posY -1].colBright++; 
 		}
 		if(!cellGrid[posX +1][posY -1].isAlive){
 			cellGrid[posX +1][posY -1].colHue = colHue;
-			cellGrid[posX +1][posY -1].colBright = 25; 
+			cellGrid[posX +1][posY -1].colBright++; 
 		}
 	}
 }

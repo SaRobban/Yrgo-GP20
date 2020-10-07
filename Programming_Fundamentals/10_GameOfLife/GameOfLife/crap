@@ -1,0 +1,55 @@
+
+/*
+	if(cellshasSpace()){
+		itt++;
+	}else{
+		print("MAXSPACE REACHED. ENDED SIM AT: " + itt);
+		}
+*/
+
+/*
+	boolean cellshasSpace(){
+		//TODO: expand cellArray if no space
+		boolean isSpace = false;
+		if(hasSpaceUp() && hasSpaceDown() && hasSpaceLeft() && hasSpaceRight()){
+			isSpace = true;
+		}
+		return isSpace;
+	}
+
+	boolean hasSpaceLeft(){
+		for(int y = 0; y < lengthY; y++){
+			if(cells[0][y].isAlive){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	boolean hasSpaceRight(){
+		for(int y = 0; y < lengthY; y++){
+			if(cells[lengthX-1][y].isAlive){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	boolean hasSpaceUp(){
+		for(int x = 0; x < lengthY; x++){
+			if(cells[x][0].isAlive){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	boolean hasSpaceDown(){
+		for(int x = 0; x < lengthX; x++){
+			if(cells[x][lengthY-1].isAlive){
+				return false;
+			}
+		}
+		return true;
+	}
+*/

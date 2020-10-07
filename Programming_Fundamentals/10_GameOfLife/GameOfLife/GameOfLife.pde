@@ -7,8 +7,8 @@
 
 CellManager cellManager;
 int frameRateSpeed = 0;
+boolean autoPlay = false;
 
-int rainbow = 0;
 void setup(){
 
 	size(800,800);
@@ -36,13 +36,17 @@ void keyPressed() {
 
 	if(key == 's'){
 		cellManager.update();
+	}
 
-		rainbow++;
-		rainbow = rainbow % 50;
+	if(key == 'a'){
+		autoPlay = !autoPlay;
 	}
 }
 
 void cellGenerationStep(){
+	if(autoPlay)
+		cellManager.update();
+
 	cellManager.draw();
 }
 
@@ -51,5 +55,5 @@ void drawText(){
 	textAlign(RIGHT, TOP);
 	text("word", 10, 30); 
 	fill(0,0,50);
-	text("press S to step generation forward \n" + "press R to restet", width -10, 10);
+	text("press S to step one generation forward \n" + "press A to autoplay generations \n" + "press R to restet", width -10, 10);
 }

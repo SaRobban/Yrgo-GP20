@@ -21,7 +21,7 @@ class CellManager{
 	void reset(){
 		for(int x = 0; x < lengthX; x++){
 			for(int y = 0; y < lengthY; y++){
-				if(x > 1 && x < lengthX-1 && y > 1 && y < lengthY-1){
+				if(x > 1 && x < lengthX -2 && y > 1 && y < lengthY -2){
 					if((int)random(5) == 0){
 						cells[x][y] = new Cell(x,y,true);
 					}else{
@@ -35,13 +35,6 @@ class CellManager{
 	}
 
 	void update(){
-		/*
-		if(cellshasSpace()){
-			itt++;
-		}else{
-			print("MAXSPACE REACHED. ENDED SIM AT: " + itt);
-		}
-*/
 		if(oneLoopUpdate){
 			cellUpdate();
 		}else{
@@ -73,52 +66,7 @@ class CellManager{
 			}
 		}
 	}
-/*
-	boolean cellshasSpace(){
-		//TODO: expand cellArray if no space
-		boolean isSpace = false;
-		if(hasSpaceUp() && hasSpaceDown() && hasSpaceLeft() && hasSpaceRight()){
-			isSpace = true;
-		}
-		return isSpace;
-	}
 
-	boolean hasSpaceLeft(){
-		for(int y = 0; y < lengthY; y++){
-			if(cells[0][y].isAlive){
-				return false;
-			}
-		}
-		return true;
-	}
-
-	boolean hasSpaceRight(){
-		for(int y = 0; y < lengthY; y++){
-			if(cells[lengthX-1][y].isAlive){
-				return false;
-			}
-		}
-		return true;
-	}
-
-	boolean hasSpaceUp(){
-		for(int x = 0; x < lengthY; x++){
-			if(cells[x][0].isAlive){
-				return false;
-			}
-		}
-		return true;
-	}
-
-	boolean hasSpaceDown(){
-		for(int x = 0; x < lengthX; x++){
-			if(cells[x][lengthY-1].isAlive){
-				return false;
-			}
-		}
-		return true;
-	}
-*/
 	void draw(){
 		for(int x = 0; x < lengthX; x++){
 			for(int y = 0; y < lengthY; y++){
@@ -126,5 +74,4 @@ class CellManager{
 			}
 		}
 	}
-
 }

@@ -23,8 +23,8 @@ public class GameOfLife extends PApplet {
 
 CellManager cellManager;
 int frameRateSpeed = 0;
+boolean autoPlay = false;
 
-int rainbow = 0;
 public void setup(){
 
 	
@@ -52,13 +52,17 @@ public void keyPressed() {
 
 	if(key == 's'){
 		cellManager.update();
+	}
 
-		rainbow++;
-		rainbow = rainbow % 50;
+	if(key == 'a'){
+		autoPlay = !autoPlay;
 	}
 }
 
 public void cellGenerationStep(){
+	if(autoPlay)
+		cellManager.update();
+
 	cellManager.draw();
 }
 
@@ -67,7 +71,7 @@ public void drawText(){
 	textAlign(RIGHT, TOP);
 	text("word", 10, 30); 
 	fill(0,0,50);
-	text("press S to step generation forward \n" + "press R to restet", width -10, 10);
+	text("press S to step one generation forward \n" + "press A to autoplay generations \n" + "press R to restet", width -10, 10);
 }
 //Singel cell
 class Cell{
@@ -111,8 +115,6 @@ class Cell{
 		setPopulationState();
 		checkNumberOfNeighbors(cellGrid);
 	}
-
-
 
 	public void checkNumberOfNeighbors(Cell[][] cellGrid){
 		numberOfNeighbors = 0;
@@ -164,34 +166,33 @@ class Cell{
 				isAlive = true;
 			}
 		}
-
-		if(isAlive){
-			colBright = 50;
-			
-		}else{
-			colBright--;
-		}
 	}
 
 	public void draw(int cSize, Cell[][] cellGrid){
 		if(isAlive){
 			age++;
 			if(wasAlive != isAlive){
-				colHue = rainbow;
+				colHue = 2;
+				colBright = 50;
 				wasAlive = isAlive;
-				colorNeighbors(cellGrid);
 			}
-			
-			fill(color(2,50,colBright,255));
 			colorNeighbors(cellGrid);
 		}else{
-			//colHue --;
-			//colHue = colHue % 50;
-			//colBright--;
-			fill(0,50,colBright,255);
+			if(wasAlive != isAlive){
+				colHue = 0;
+				colBright = 25;
+				wasAlive = isAlive;
+			}
+			if(colBright > 25)
+				colBright = 25;
+			colBright--;
 		}
+		fill(color(colHue,50,colBright,255));
 		rect(posX * cSize, posY * cSize, cSize, cSize);
 	}
+
+
+
 
 
 	public void colorNeighbors(Cell[][] cellGrid){
@@ -204,37 +205,37 @@ class Cell{
 
 		if(!cellGrid[posX -1][posY +1].isAlive){
 			cellGrid[posX -1][posY +1].colHue = colHue;
-			cellGrid[posX -1][posY +1].colBright = 25; 
+			cellGrid[posX -1][posY +1].colBright++; 
 		}
 		if(!cellGrid[posX][posY +1].isAlive){
 			cellGrid[posX][posY +1].colHue = colHue;
-			cellGrid[posX][posY +1].colBright = 25; 
+			cellGrid[posX][posY +1].colBright++; 
 		}
 		if(!cellGrid[posX +1][posY +1].isAlive){
 			cellGrid[posX +1][posY +1].colHue = colHue;
-			cellGrid[posX +1][posY +1].colBright = 25; 
+			cellGrid[posX +1][posY +1].colBright++; 
 		}
 
 		if(!cellGrid[posX -1][posY].isAlive){
 			cellGrid[posX -1][posY].colHue = colHue;
-			cellGrid[posX -1][posY].colBright = 25; 
+			cellGrid[posX -1][posY].colBright++; 
 		}
 		if(!cellGrid[posX +1][posY].isAlive){
 			cellGrid[posX +1][posY].colHue = colHue;
-			cellGrid[posX +1][posY].colBright = 25; 
+			cellGrid[posX +1][posY].colBright++; 
 		}
 
 		if(!cellGrid[posX -1][posY -1].isAlive){
 			cellGrid[posX -1][posY -1].colHue = colHue;
-			cellGrid[posX -1][posY -1].colBright = 25; 
+			cellGrid[posX -1][posY -1].colBright++; 
 		}
 		if(!cellGrid[posX][posY -1].isAlive){
 			cellGrid[posX][posY -1].colHue = colHue;
-			cellGrid[posX][posY -1].colBright = 25; 
+			cellGrid[posX][posY -1].colBright++; 
 		}
 		if(!cellGrid[posX +1][posY -1].isAlive){
 			cellGrid[posX +1][posY -1].colHue = colHue;
-			cellGrid[posX +1][posY -1].colBright = 25; 
+			cellGrid[posX +1][posY -1].colBright++; 
 		}
 	}
 }
@@ -261,7 +262,7 @@ class CellManager{
 	public void reset(){
 		for(int x = 0; x < lengthX; x++){
 			for(int y = 0; y < lengthY; y++){
-				if(x > 1 && x < lengthX-1 && y > 1 && y < lengthY-1){
+				if(x > 1 && x < lengthX -2 && y > 1 && y < lengthY -2){
 					if((int)random(5) == 0){
 						cells[x][y] = new Cell(x,y,true);
 					}else{
@@ -275,13 +276,6 @@ class CellManager{
 	}
 
 	public void update(){
-		/*
-		if(cellshasSpace()){
-			itt++;
-		}else{
-			print("MAXSPACE REACHED. ENDED SIM AT: " + itt);
-		}
-*/
 		if(oneLoopUpdate){
 			cellUpdate();
 		}else{
@@ -313,52 +307,7 @@ class CellManager{
 			}
 		}
 	}
-/*
-	boolean cellshasSpace(){
-		//TODO: expand cellArray if no space
-		boolean isSpace = false;
-		if(hasSpaceUp() && hasSpaceDown() && hasSpaceLeft() && hasSpaceRight()){
-			isSpace = true;
-		}
-		return isSpace;
-	}
 
-	boolean hasSpaceLeft(){
-		for(int y = 0; y < lengthY; y++){
-			if(cells[0][y].isAlive){
-				return false;
-			}
-		}
-		return true;
-	}
-
-	boolean hasSpaceRight(){
-		for(int y = 0; y < lengthY; y++){
-			if(cells[lengthX-1][y].isAlive){
-				return false;
-			}
-		}
-		return true;
-	}
-
-	boolean hasSpaceUp(){
-		for(int x = 0; x < lengthY; x++){
-			if(cells[x][0].isAlive){
-				return false;
-			}
-		}
-		return true;
-	}
-
-	boolean hasSpaceDown(){
-		for(int x = 0; x < lengthX; x++){
-			if(cells[x][lengthY-1].isAlive){
-				return false;
-			}
-		}
-		return true;
-	}
-*/
 	public void draw(){
 		for(int x = 0; x < lengthX; x++){
 			for(int y = 0; y < lengthY; y++){
@@ -366,7 +315,6 @@ class CellManager{
 			}
 		}
 	}
-
 }
   public void settings() { 	size(800,800); }
   static public void main(String[] passedArgs) {
