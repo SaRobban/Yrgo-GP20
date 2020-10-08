@@ -58,6 +58,5 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-Programming_Fundamentals/02_Learning to Program/sketch_02_Learning_to_Program_Extra/sketch_02_Learning_to_Program1370140827648518675.autosave
 *.autosave
-*.class
+build-tmp/
