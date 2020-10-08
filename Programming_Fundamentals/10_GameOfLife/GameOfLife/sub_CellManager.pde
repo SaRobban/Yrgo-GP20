@@ -1,14 +1,15 @@
-//Cell Manager
+//Manager of cells
 class CellManager{
 	Cell[][] cells;
 	int lengthX;
 	int lengthY;
 
-	int itt = 0;
-	int cellSize = 5;
+	Cell[] aliveCells;
+	int numberOfAliveCells;
 
-	boolean toggelFX = false;
+	int cellSize = 5;
 	
+
 	CellManager(int cellSizeInPixels, int chanceOfLifeAtStart, boolean wrapAround){
 		reset(cellSizeInPixels, chanceOfLifeAtStart, wrapAround);
 	}
@@ -17,25 +18,28 @@ class CellManager{
 		cellSize = cellSizeInPixels;
 		lengthX = (int) (width / cellSize);
 		lengthY = (int) (height / cellSize);
-		print("X="+lengthX + "  Y=" + lengthY + "  totalcells = " + lengthY*lengthX +"\n");
-		cells = new Cell[lengthX][lengthY];
 
+		cells = new Cell[lengthX][lengthY];
+		aliveCells = new Cell[lengthX * lengthY];
+		numberOfAliveCells = 0;
 
 		resetCellsArray(chanceOfLifeAtStart, wrapAround);
-	}
-	void toggelVisualFX(){
-		toggelFX = ! toggelFX;
-	}
 
+		print("X="+lengthX + "  Y=" + lengthY + "  totalcells = " + lengthY*lengthX +"\n");
+		print("numberOfAliveCells = " + numberOfAliveCells + "\n"+"length of alive = " + aliveCells.length + "\n");
+	}
+	
 	void resetCellsArray(int chanceOfLifeAtStart, boolean wrapAround){
 		for(int x = 0; x < lengthX; x++){
 			for(int y = 0; y < lengthY; y++){
 				resetCell(x, y, chanceOfLifeAtStart);
 			}
 		}
+		
 	}
 
 	void resetCell(int posX, int posY, int chanceOfLifeAtStart){
+		//WARNING: You are inside a loop. 
 		int minX = posX-1;
 		int maxX = posX+1;
 		int minY = posY-1;
@@ -68,21 +72,25 @@ class CellManager{
 	}
 
 	void fillCell(int x, int y, int chanceOfLifeAtStart, int[] cellNeighbors ){
+		//WARNING: You are inside a loop.
 		//Set nolife on edges of array, set random life inside
 		if(x > 1 && x < lengthX -2 && y > 1 && y < lengthY -2){
 			if((int)random(chanceOfLifeAtStart) == 0){
-				cells[x][y] = new Cell(x, y, true, cellNeighbors);
+				cells[x][y] = new Cell(x, y, cellSize, true, cellNeighbors);
+				aliveCells[numberOfAliveCells] = cells[x][y];
+				numberOfAliveCells++;
 			}else{
-				cells[x][y] = new Cell(x,y,false,cellNeighbors);	
+				cells[x][y] = new Cell(x, y, cellSize, false, cellNeighbors);	
 			}
 		}else {
-			cells[x][y] = new Cell(x,y,false,cellNeighbors);
+			cells[x][y] = new Cell(x, y, cellSize, false, cellNeighbors);
 		}
 	}
 
+
 	void update(){
 		checkCellNeighbors();
-		setCellPopulation();
+		setCellState();
 	}
 
 	void checkCellNeighbors(){
@@ -93,36 +101,29 @@ class CellManager{
 		}
 	}
 
-	void setCellPopulation(){
+	void setCellState(){
+		numberOfAliveCells = 0;
 		for(int x = 0; x < lengthX; x++){
 			for(int y = 0; y < lengthY; y++){
-				cells[x][y].setPopulationState();
+				aliveCells[numberOfAliveCells] = cells[x][y];
+				numberOfAliveCells += cells[x][y].setState();
 			}
 		}
 	}
 
+
 	void draw(boolean drawFX){
+		if(drawFX){
+			fill(color(0,128,128,255));
+			int largeSize = cellSize * 3;
+			for(int i = 0; i < numberOfAliveCells; i++){
+				aliveCells[i].drawFX(cellSize, largeSize);
+			}
+		}
+
 		fill(color(0,255,128,255));
-		if(!drawFX){
-			for(int x = 0; x < lengthX; x++){
-				for(int y = 0; y < lengthY; y++){
-					cells[x][y].draw(cellSize);
-				}
-			}
-			return;
-		}else{
-			int largeSize = cellSize *3;
-			for(int x = 0; x < lengthX; x++){
-				for(int y = 0; y < lengthY; y++){
-					cells[x][y].drawFX(cellSize, largeSize);
-				}
-			}
-			/*
-			for(int x = 0; x < lengthX; x++){
-				for(int y = 0; y < lengthY; y++){
-				}
-			}*/
-			return;
+		for(int i = 0; i < numberOfAliveCells; i++){
+			aliveCells[i].draw(cellSize);
 		}
 	}
 }

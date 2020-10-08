@@ -3,17 +3,12 @@ class Cell{
 	int numberOfAliveNeighbors = 0;
 	int[] indexOfNeighbors;
 	boolean isAlive = false;
-	boolean wasAlive = false;
 	int posX;
 	int posY;
 
-	int age = 0;
-	int colHue = 0;
-	int colBright = 0;
-
-	Cell(int posX, int posY, boolean alive, int[] indexOfNeighbors){
-		this.posX = posX;
-		this.posY = posY;
+	Cell(int posX, int posY, int cellSize, boolean alive, int[] indexOfNeighbors){
+		this.posX = posX * cellSize;
+		this.posY = posY * cellSize;
 		this.isAlive = alive;
 		this.indexOfNeighbors = indexOfNeighbors;
 	}
@@ -30,9 +25,8 @@ class Cell{
 		}
 	}
 
-	void setPopulationState(){
-
-		//TODO: check if speed up is posseble
+	int setState(){
+		//TODO: check if speed up is posseble, first by toggle order of if statements
 		//Any live cell with fewer than two live neighbors dies, as if caused by underpopulation.
 		//Any live cell with two or three live neighbors lives on to the next generation.
 		//Any live cell with more than three live neighbors dies, as if by overpopulation.
@@ -40,34 +34,32 @@ class Cell{
 		if(isAlive){
 			if(numberOfAliveNeighbors < 2){
 				isAlive = false;
-				return;
+				return 0;
 			}else if(numberOfAliveNeighbors < 4){
 				isAlive = true;
-				return;
+				return 1;
 			}else{ 
 				isAlive = false;
-				return;
+				return 0;
 			}
 		}else{
 			if(numberOfAliveNeighbors == 3){
 				isAlive = true;
-				return;
+				return 1;
 			}
 		}
+		return 0;
 	}
 
 	void draw(int cSize){
 		if(isAlive){
-			rect(posX * cSize, posY * cSize, cSize, cSize);
+			rect(posX, posY, cSize, cSize);
 		}
 	}
 
 	void drawFX(int cSize, int largeSize){
 		if(isAlive){
-			//fill(color(0,128,64,255));
-			rect(posX * cSize - cSize, posY * cSize - cSize, largeSize, largeSize);
-			//fill(color(0,255,128,255));
-			rect(posX * cSize, posY * cSize, cSize, cSize);
+			rect(posX - cSize, posY - cSize, largeSize, largeSize);
 		}
 	}
 }
