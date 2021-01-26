@@ -82,7 +82,5 @@ Packages/
 ProjectSettings/
 UserSettings/
 
-*.meta
-
 *.autosave
 build-tmp/
