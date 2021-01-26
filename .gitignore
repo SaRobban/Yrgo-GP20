@@ -79,6 +79,9 @@ Library/
 Logs/
 obj/
 Packages/
+Library/
+ProjectSettings/
+UserSettings/
 
 *.autosave
 build-tmp/
