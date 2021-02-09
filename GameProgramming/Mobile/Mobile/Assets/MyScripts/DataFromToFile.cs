@@ -29,7 +29,6 @@ public struct PlayerInfo
     }
 }
 
-
 [RequireComponent(typeof(SaveManager))]
 
 public class DataFromToFile : MonoBehaviour
@@ -37,7 +36,7 @@ public class DataFromToFile : MonoBehaviour
     public SaveManager saveManager;
     private void Awake()
     {
-        GetComponent<SaveManager>();
+        saveManager = GetComponent<SaveManager>();
     }
 
     public void SaveData()

@@ -11,47 +11,11 @@ using Firebase.Database;
 using Firebase.Auth;
 
 [RequireComponent (typeof(DataFromToFile))]
-/*
-[Serializable]
-public struct DataToStore
-{
-    public PlayerInfo[] players;
-    public DataToStore(PlayerInfo[] players)
-    {
-        this.players = players;
-    }
-}
-
-[Serializable]
-public struct PlayerInfo
-{
-    public string Name;
-    public Vector3 Position;
-
-
-    public PlayerInfo(string Name, Vector3 Position)
-    {
-        this.Name = Name;
-        this.Position = Position;
-    }
-}
-*/
 public class SaveManager : MonoBehaviour
 {
-    /*
-    public void SetDataToObject(DataToStore storedData)
-    {
-        Move[] players = FindObjectsOfType<Move>();
-
-        for (int i = 0; i < players.Length; i++)
-        {
-            players[i].transform.name = storedData.players[i].Name;
-            players[i].transform.position = storedData.players[i].Position;
-        }
-    }
-    */
     //Start Here
-    private DataFromToFile dataFromToFile;
+    public DataFromToFile dataFromToFile;
+    public string saveFileName = "GameSaveFile";
 
     public bool storeLocal = false;
     public bool storeOnline = false;
@@ -70,13 +34,13 @@ public class SaveManager : MonoBehaviour
 
         //save that
         if (storeLocal)
-            SaveToFile("GameSaveFile", jsonString);
+            SaveToFile(saveFileName, jsonString);
 
         if (storeOnline)
-            SaveOnWeb("GameSaveFile", jsonString);
+            SaveOnWeb(saveFileName, jsonString);
 
         if (storeFireBase)
-            StartCoroutine(SaveToFireBase("GameSaveFile", jsonString));
+            StartCoroutine(SaveToFireBase(saveFileName, jsonString));
 
         if (!storeLocal && !storeOnline && !storeFireBase)
             Debug.Log("Error : NO SELECTED TARGET FOR SAVEFILE");
@@ -134,26 +98,6 @@ public class SaveManager : MonoBehaviour
         yield return new WaitUntil(() => dataTask.IsCompleted);
         Debug.Log("<color=green>Saved to FireBase</color>");
     }
-    /*
-    //Prosses What should be saved/Loaded
-    public DataToStore StoreThisData()
-    {
-        //Get player info
-        Move[] players = FindObjectsOfType<Move>();
-
-        //Create holder object
-        DataToStore storedData = new DataToStore(new PlayerInfo[players.Length]);
-
-
-        //put info in playerinfo class
-        for (int i = 0; i < players.Length; i++)
-        {
-            storedData.players[i] = new PlayerInfo(players[i].transform.name, players[i].transform.position);
-        }
-
-        return storedData;
-    }
-    */
 
 
     //LOAD FILE////////////////////////////////////////////////////////////////////////////////////////
@@ -163,12 +107,12 @@ public class SaveManager : MonoBehaviour
 
         //load file from HDD
         if (storeLocal)
-            LoadFromLocal("GameSaveFile");
+            LoadFromLocal(saveFileName);
 
         //load file from server
         if (storeOnline)
         {
-            LoadFromWeb("GameSaveFile");
+            LoadFromWeb(saveFileName);
         }
 
         if (storeFireBase)
@@ -187,7 +131,6 @@ public class SaveManager : MonoBehaviour
         {
             DataToStore storedData = JsonUtility.FromJson<DataToStore>(jsonString);
             dataFromToFile.SetDataToObject(storedData);
-            //            SetLoadData(JsonUtility.FromJson<DataToStore>(jsonString));
             Debug.Log("Loaded");
         }
     }
@@ -220,6 +163,10 @@ public class SaveManager : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// Ieromator
+    /// </summary>
     private void LoadFromFireBase()
     {
         var db = FirebaseDatabase.DefaultInstance;
