@@ -10,6 +10,8 @@ using Firebase.Extensions;
 using Firebase.Database;
 using Firebase.Auth;
 
+[RequireComponent (typeof(DataFromToFile))]
+/*
 [Serializable]
 public struct DataToStore
 {
@@ -33,8 +35,10 @@ public struct PlayerInfo
         this.Position = Position;
     }
 }
+*/
 public class SaveManager : MonoBehaviour
 {
+    /*
     public void SetDataToObject(DataToStore storedData)
     {
         Move[] players = FindObjectsOfType<Move>();
@@ -45,19 +49,24 @@ public class SaveManager : MonoBehaviour
             players[i].transform.position = storedData.players[i].Position;
         }
     }
-
+    */
     //Start Here
+    private DataFromToFile dataFromToFile;
+
     public bool storeLocal = false;
     public bool storeOnline = false;
     public bool storeFireBase = false;
-    public void SaveData()
+
+    private void Awake()
+    {
+        dataFromToFile = GetComponent<DataFromToFile>();
+    }
+
+    public void SaveDataToggle(DataToStore dataIn)
     {
         Debug.Log("StartSaving");
-
-        DataToStore storedData = StoreThisData();
-
         //turn class into json 
-        string jsonString = JsonUtility.ToJson(storedData);
+        string jsonString = JsonUtility.ToJson(dataIn);
 
         //save that
         if (storeLocal)
@@ -73,6 +82,9 @@ public class SaveManager : MonoBehaviour
             Debug.Log("Error : NO SELECTED TARGET FOR SAVEFILE");
     }
 
+
+
+    //SAVE FILE////////////////////////////////////////////////////////////////////////////////////////
     public void SaveToFile(string fileName, string jsonString)
     {
         // Open a file in write mode. This will create the file if it's missing.
@@ -122,7 +134,7 @@ public class SaveManager : MonoBehaviour
         yield return new WaitUntil(() => dataTask.IsCompleted);
         Debug.Log("<color=green>Saved to FireBase</color>");
     }
-
+    /*
     //Prosses What should be saved/Loaded
     public DataToStore StoreThisData()
     {
@@ -141,17 +153,17 @@ public class SaveManager : MonoBehaviour
 
         return storedData;
     }
+    */
 
-    public void LoadData()
+
+    //LOAD FILE////////////////////////////////////////////////////////////////////////////////////////
+    public void LoadDataToggle()
     {
         Debug.Log("Start Loading");
-
-        string jsonString = null;
 
         //load file from HDD
         if (storeLocal)
             LoadFromLocal("GameSaveFile");
-
 
         //load file from server
         if (storeOnline)
@@ -163,9 +175,6 @@ public class SaveManager : MonoBehaviour
         {
             LoadFromFireBase();
         }
-
-
-
     }
 
     void SetLoadData(string jsonString)
@@ -177,7 +186,8 @@ public class SaveManager : MonoBehaviour
         else
         {
             DataToStore storedData = JsonUtility.FromJson<DataToStore>(jsonString);
-            SetDataToObject(storedData);
+            dataFromToFile.SetDataToObject(storedData);
+            //            SetLoadData(JsonUtility.FromJson<DataToStore>(jsonString));
             Debug.Log("Loaded");
         }
     }
@@ -192,7 +202,6 @@ public class SaveManager : MonoBehaviour
             SetLoadData(stream.ReadToEnd());
         }
     }
-
 
     public void LoadFromWeb(string name)
     {
