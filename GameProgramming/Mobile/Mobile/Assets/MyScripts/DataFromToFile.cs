@@ -48,7 +48,7 @@ public class DataFromToFile : MonoBehaviour
 
     public void LoadData()
     {
-        saveManager.LoadData();
+        saveManager.LoadDataToggle();
     }
 
     //Prosses What should be saved

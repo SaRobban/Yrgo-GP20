@@ -85,7 +85,7 @@ public class SaveManager : MonoBehaviour
 
 
     //SAVE FILE////////////////////////////////////////////////////////////////////////////////////////
-    public void SaveToFile(string fileName, string jsonString)
+    private void SaveToFile(string fileName, string jsonString)
     {
         // Open a file in write mode. This will create the file if it's missing.
         // It is assumed that the path already exists.
@@ -105,7 +105,7 @@ public class SaveManager : MonoBehaviour
     }
 
     //Saves the playerInfo string on the server.
-    public void SaveOnWeb(string fileName, string saveData)
+    private void SaveOnWeb(string fileName, string saveData)
     {
         // Create a request for the URL.
         WebRequest request = (HttpWebRequest)WebRequest.Create("http://localhost:8080/" + fileName);
@@ -122,7 +122,7 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    IEnumerator SaveToFireBase(string userID, string jsonString)
+    private IEnumerator SaveToFireBase(string userID, string jsonString)
     {
         Debug.Log("Start save to FireBase");
 
@@ -177,7 +177,7 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    void SetLoadData(string jsonString)
+    private void SetLoadData(string jsonString)
     {
         if (string.IsNullOrEmpty(jsonString))
         {
@@ -192,7 +192,7 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    public void LoadFromLocal(string fileName)
+    private void LoadFromLocal(string fileName)
     {
         // Open a stream for the supplied file name as a text file
         using (StreamReader stream = File.OpenText(Application.persistentDataPath + "\\" + fileName))
@@ -203,7 +203,7 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    public void LoadFromWeb(string name)
+    private void LoadFromWeb(string name)
     {
         WebRequest request = (HttpWebRequest)WebRequest.Create("http://localhost:8080/" + name);
         WebResponse response = (HttpWebResponse)request.GetResponse();

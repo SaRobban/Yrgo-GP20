@@ -3,13 +3,13 @@ using UnityEngine.UI;
 
 public class Buttons : MonoBehaviour
 {
-    public SaveManager fileM;
+    public DataFromToFile fileM;
 
     private void Start()
     {
         if (!fileM)
         {
-            fileM = FindObjectOfType<SaveManager>();
+            fileM = FindObjectOfType<DataFromToFile>();
         }
     }
     public void OnClickSave()
