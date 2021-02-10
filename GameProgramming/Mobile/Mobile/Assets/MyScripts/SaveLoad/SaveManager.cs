@@ -163,10 +163,6 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-
-    /// <summary>
-    /// Ieromator
-    /// </summary>
     private void LoadFromFireBase()
     {
         var db = FirebaseDatabase.DefaultInstance;
