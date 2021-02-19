@@ -9,13 +9,11 @@ using System;
 using TMPro;
 
 
-public class FirebaseTest : MonoBehaviour
+public class FirebaseAcount : MonoBehaviour
 {
 	public string storedEmail;
 	public string storedPassword;
 
-	public TMP_InputField emailIn;
-	public TMP_InputField paswIn;
     private void Start()
     {
         //StartSignIn("")
@@ -49,16 +47,15 @@ public class FirebaseTest : MonoBehaviour
 		StartLogOn(storedEmail, storedPassword, false);
     }
 
-	public void ChangeEmail()
+	public void ChangeEmail(string text)
     {
-		print(emailIn.text);
-		storedEmail = emailIn.text;
+		print(text);
+		storedEmail = text;
 	}
-	public void ChangePassword()
+	public void ChangePassword(string text)
 	{
-		print(paswIn.text);
-		storedPassword = paswIn.text;
-		//paswIn.text = "";
+		print(text);
+		storedPassword = text;
 	}
 
 	private IEnumerator RegUser(string email, string password)
